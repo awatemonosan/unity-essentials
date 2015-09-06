@@ -206,7 +206,8 @@ public class VoxelModel : MonoBehaviour {
   public JSONObject ToJSON(){
     return ToJSON(0);
   }
-  public JSONObject ToJSON(version){
+
+  public JSONObject ToJSON(int version){
     switch(version){
       case 1:
         return ToJSON_V1();
