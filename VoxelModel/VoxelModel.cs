@@ -160,7 +160,7 @@ public class VoxelModel : MonoBehaviour {
   public void Set(Vector3 point, int colorIndex){
     point = point.Floor();
 
-    this.Get(point).colorIndex = colorIndex;
+    this.Get(point).color = pallets[currentPallet][colorIndex];
   }
 
   public void Set(Selector selection, GameObject prefab) {
@@ -223,15 +223,8 @@ public class VoxelModel : MonoBehaviour {
   }
   public void Load( JSONObject json ){
     if(json.HasField("version")){
-      switch (json.GetField("version")) {
-        case 1:
-          Load_V1(json);
-          break;
-
-        case 0:
-        default:
-          Load_V1(json);
-      }
+      if(json.GetField("version").i == 1) Load_V1(json);
+      else Load_V1(json);
     } else {
       Load_V1(json);
     }
@@ -246,7 +239,7 @@ public class VoxelModel : MonoBehaviour {
       Voxel voxel = pair.Value;
 
       string name = voxel.gameObject.name;
-      int colorIndex = voxel.colorIndex;
+      int colorIndex = voxel.color.ToIndex(pallets[currentPallet]);
 
       if(!json.HasField((int)point.x))
         json.SetField( (int)point.x, new JSONObject(JSONObject.Type.OBJECT) );
@@ -284,7 +277,7 @@ public class VoxelModel : MonoBehaviour {
           JSONObject jsonVoxel = ((JSONObject)jsonZ.list[k]);
 
           string voxelName = jsonVoxel.GetField("name").str;
-          index colorIndex = jsonVoxel.GetField("color_index").str;
+          int colorIndex = jsonVoxel.GetField("color_index").i;
 
           this.Set(new Vector3(x,y,z), voxelName, colorIndex);
         }
@@ -302,7 +295,7 @@ public class VoxelModel : MonoBehaviour {
       Voxel voxel = pair.Value;
 
       string name = voxel.gameObject.name;
-      int colorIndex = voxel.colorIndex;
+      int colorIndex = voxel.color.ToIndex( pallets[currentPallet] );
 
       if(!json.HasField((int)point.x))
         json.SetField( (int)point.x, new JSONObject(JSONObject.Type.OBJECT) );
@@ -324,23 +317,33 @@ public class VoxelModel : MonoBehaviour {
     return json;
   }
 
+  public int NewPallet(){
+    pallets.Add(new List<Color>());
+    return pallets.Count-1;
+  }
+
+  public void AddColor(int palletID, Color color){
+    if(palletID < 0 || palletID > pallets.Count) return;
+    pallets[palletID].Add(color);
+  }
+
   public void Load_V1( JSONObject json ){
     this.Clear();
 
     JSONObject pallets = json.GetField("pallets");
 
-    foreach(JSONObject pallet in pallets){
+    foreach(JSONObject pallet in pallets.list){
       int palletID = this.NewPallet();
 
       this.AddColor(palletID,new Color(1,1,1,0)); // 0: Transparent
       this.AddColor(palletID,new Color(1,1,1,1)); // 1: White
       this.AddColor(palletID,new Color(0,0,0,1)); // 2: Black
 
-      foreach(JSONObject color in pallet){
-        r = color.GetField("r").f;
-        g = color.GetField("g").f;
-        b = color.GetField("b").f;
-        a = color.GetField("a").f;
+      foreach(JSONObject color in pallet.list){
+        float r = color.GetField("r").f;
+        float g = color.GetField("g").f;
+        float b = color.GetField("b").f;
+        float a = color.GetField("a").f;
 
         this.AddColor(palletID, new Color(r, g, b, a));
         // TODO: Consider a pallet/color inheritance system
@@ -360,7 +363,7 @@ public class VoxelModel : MonoBehaviour {
           JSONObject jsonVoxel = ((JSONObject)jsonZ.list[k]);
 
           string voxelName = jsonVoxel.GetField("name").str;
-          index colorIndex = jsonVoxel.GetField("color_index").str;
+          int colorIndex = jsonVoxel.GetField("color_index").i;
 
           this.Set(new Vector3(x,y,z), voxelName, colorIndex);
         }
