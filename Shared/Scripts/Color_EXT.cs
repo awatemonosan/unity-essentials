@@ -28,6 +28,22 @@ public static class Color_EXT {
   }
 
   public static int ToIndex(this Color that, List<Color> pallet){
-    return 1;
+    float bestDiff = Mathf.Infinity;
+    int bestIndex = 0;
+
+    for(int index = 0; index < pallet.Count; index++)
+      float r = Mathf.abs(that.r-pallet[index].r);
+      float g = Mathf.abs(that.g-pallet[index].g);
+      float b = Mathf.abs(that.b-pallet[index].b);
+      float a = Mathf.abs(that.a-pallet[index].a);
+      float diff = r+g+b+a;
+
+      if(diff<bestDiff){
+        bestDiff = diff;
+        bestIndex = index;
+      }
+    }
+
+    return index;
   }
 }
