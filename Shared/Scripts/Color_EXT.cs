@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public static class Color_EXT {
   
@@ -31,11 +32,11 @@ public static class Color_EXT {
     float bestDiff = Mathf.Infinity;
     int bestIndex = 0;
 
-    for(int index = 0; index < pallet.Count; index++)
-      float r = Mathf.abs(that.r-pallet[index].r);
-      float g = Mathf.abs(that.g-pallet[index].g);
-      float b = Mathf.abs(that.b-pallet[index].b);
-      float a = Mathf.abs(that.a-pallet[index].a);
+    for(int index = 0; index < pallet.Count; index++){
+      float r = Mathf.Abs(that.r-pallet[index].r);
+      float g = Mathf.Abs(that.g-pallet[index].g);
+      float b = Mathf.Abs(that.b-pallet[index].b);
+      float a = Mathf.Abs(that.a-pallet[index].a);
       float diff = r+g+b+a;
 
       if(diff<bestDiff){
@@ -44,6 +45,6 @@ public static class Color_EXT {
       }
     }
 
-    return index;
+    return bestIndex;
   }
 }
