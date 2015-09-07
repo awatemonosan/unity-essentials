@@ -27,4 +27,7 @@ public static class Color_EXT {
     return that;
   }
 
+  public static int ToIndex(this Color that, List<Color> pallet){
+    return 1;
+  }
 }

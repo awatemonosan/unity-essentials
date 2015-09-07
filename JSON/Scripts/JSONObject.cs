@@ -56,6 +56,11 @@ public class JSONObject {
 		}
 	}
 #endif
+	public int i {
+		get {
+			return (int)n;
+		}
+	}
 	public bool b;
 	public delegate void AddJSONContents(JSONObject self);
 
