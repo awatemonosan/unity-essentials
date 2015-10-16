@@ -6,9 +6,9 @@ public static class Vector3_EXT {
   public static Vector3 Random(this Vector3 that){
     Vector3 v = new Vector3();
 
-    v.x = UnityEngine.Random.Range(-1.0f, 1.0f);
-    v.y = UnityEngine.Random.Range(-1.0f, 1.0f);
-    v.z = UnityEngine.Random.Range(-1.0f, 1.0f);
+	v.x = that.x * UnityEngine.Random.Range(-1.0f, 1.0f);
+	v.y = that.y * UnityEngine.Random.Range(-1.0f, 1.0f);
+	v.z = that.z * UnityEngine.Random.Range(-1.0f, 1.0f);
 
     return v.normalized;
   }

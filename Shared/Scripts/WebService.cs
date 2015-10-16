@@ -16,13 +16,13 @@ public class WebService {
     headers.Add( "Content-Type", "application/json" );
     return ( new WWW(url, str.ToBytes(), headers) ).text;
   }
-  public static string PostStringGetJSON(string url, string str){
-    return JSONObject.new(PostString(url,str));
+  public static JSONObject PostStringGetJSON(string url, string str){
+    return JSONObject.Create(PostString(url,str));
   }
   public static string PostJSON(string url, JSONObject json){
     return PostString(url, json.Print());
   }
   public static JSONObject PostJSONGetJSON(string url, JSONObject json){
-    return JSONObject.new(PostJSON(url,json));
+    return JSONObject.Create(PostJSON(url,json));
   }
 }

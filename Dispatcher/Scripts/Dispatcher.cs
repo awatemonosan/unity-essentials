@@ -30,7 +30,7 @@ public class Dispatcher {
       Trigger(this.bindings[evnt]);
 
     if(this.events.ContainsKey(evnt)) {
-      if(evnt=="all") {
+      if(evnt=="all") { // when you trigger "all" it triggers ALL registered events
         foreach(KeyValuePair<string, ArrayList> entry in this.events) {
           ArrayList callbacks = entry.Value;
           foreach(Callback callback in callbacks) {
@@ -38,7 +38,7 @@ public class Dispatcher {
           }
         }
       } else {
-        if(this.events.ContainsKey("every")){
+        if(this.events.ContainsKey("every")){ // Every event triggers the Every event.
           foreach(Callback callback in this.events["every"]) {
             callback(payload);
           }
