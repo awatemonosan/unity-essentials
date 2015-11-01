@@ -3,60 +3,74 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class DispatcherComponent : MonoBehaviour {
-  public bool Head = false;
-
   private Dispatcher dispatcher = new Dispatcher();
+  
+  public bool IsHead = false;
 
+  public DispatcherComponent Head {
+    get{
+      if(this.IsHead) return this;
+      DispatcherComponent up = this.Up;
+      if(up == null) return null;
+      DispatcherComponent head = up.Head;
+      if(head == null) return null;
+      return head;
+    }
+  }
+
+  public DispatcherComponent Up {
+    get{
+      if(this.IsHead) return null;
+      Transform parent = this.transform.parent;
+      if(parent == null) return null;
+      return parent.GetDispatcher();
+    }
+  }
+
+  public void AnimKeyframe(string evnt) {
+    Hashtable payload = new Hashtable( );
+    payload["keyframe"] = evnt;
+    this.Trigger("keyframe", payload);
+  }
   public void Trigger(string evnt) {
-    Hashtable payload = new Hashtable();
-    payload["source"] = this.gameObject;
-
-    dispatcher.Trigger(evnt, payload);
+    this.Trigger(evnt, new Hashtable( ));
+  }
+  public void Trigger(string evnt, Hashtable payload) {
+    payload["event"] = evnt;
+    this.Trigger(payload);
   }
   public void Trigger(Hashtable payload) {
     if(!payload.ContainsKey("source"))
       payload["source"] = this.gameObject;
 
-    dispatcher.Trigger(payload);
-  }
-  public void Trigger(string evnt, Hashtable payload) {
-    if(!payload.ContainsKey("source"))
-      payload["source"] = this.gameObject;
-
-    dispatcher.Trigger(evnt, payload);
+    this.dispatcher.Trigger(payload);
   }
 
   public int On(string evnt, Callback callback) {
-    return dispatcher.On(evnt, callback);
+    return this.dispatcher.On(evnt, callback);
   }
 
   public void Off(int reference) {
-    dispatcher.Off(reference);
+    this.dispatcher.Off(reference);
   }
 
   public void Bind(string from, string to) {
-    dispatcher.Bind(from, to);
+    this.dispatcher.Bind(from, to);
   }
 
   public void Unbind(string binding) {
-    dispatcher.Unbind(binding);
+    this.dispatcher.Unbind(binding);
   }
 
   private void SendUp(Hashtable payload) {
-    Transform head = this.transform.parent;
-    while(head != null){
-      if(head.GetDispatcher().Head == true)
-        head.Trigger(payload);
-
-      head = head.parent;
-    }
+    if(this.Up) this.Up.Trigger(payload);
   }
 
   public void Start() {
-    dispatcher.On("Every", this.SendUp);
+    this.On("every", this.SendUp);
   }
 
   public void Update() {
-    dispatcher.Trigger("Update");
+    this.Trigger("update");
   }
 }

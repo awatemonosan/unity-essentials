@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -14,6 +14,8 @@ public class Dispatcher {
 
   private static int eventID = 0;
 
+  private int lastEventID = -1;
+
   public void Trigger(string evnt) {
     this.Trigger(evnt, new Hashtable( ));
   }
@@ -21,45 +23,60 @@ public class Dispatcher {
     payload["event"] = evnt;
     this.Trigger(payload);
   }
-  public void Trigger(Hashtable payload) {
-    payload["eventID"] = eventID;
+  public void Trigger(Hashtable payload) {    
+    if(!payload.ContainsKey("eventID")) {
+      payload["eventID"] = eventID;
+      eventID++;
+    } else if(this.lastEventID == (int)payload["eventID"]){
+      return;
+    }
+    
+    this.lastEventID = (int)payload["eventID"];
+
     if(payload["event"] == null) return;
-    string evnt = (string)payload["event"];
+    string evnt = ((string)payload["event"]);
+    payload["event"] = evnt = evnt.ToLower();
 
     if(this.bindings.ContainsKey(evnt))
       Trigger(this.bindings[evnt]);
 
-    if(this.events.ContainsKey(evnt)) {
-      if(evnt=="all") { // when you trigger "all" it triggers ALL registered events
-        foreach(KeyValuePair<string, ArrayList> entry in this.events) {
-          ArrayList callbacks = entry.Value;
-          foreach(Callback callback in callbacks) {
-            callback(payload);
-          }
+    // If all
+    if(evnt=="all") {
+      // retrigger all
+      foreach(KeyValuePair<string, ArrayList> entry in this.events) {
+        ArrayList callbacks = entry.Value;
+        foreach(Callback callback in callbacks) {
+          callback(payload);
         }
-      } else {
-        if(this.events.ContainsKey("every")){ // Every event triggers the Every event.
-          foreach(Callback callback in this.events["every"]) {
-            callback(payload);
-          }
-        }
+      }
+    // Else
+    } else {
+      // Trigger event
+      if(this.events.ContainsKey(evnt)) {
         foreach(Callback callback in this.events[evnt]) {
           callback(payload);
         }
       }
+      // Trigger every
+      if(this.events.ContainsKey("every")){
+        foreach(Callback callback in this.events["every"]) {
+          callback(payload);
+        }
+      }
     }
-    eventID++;
   }
 
   public void Bind( string from, string to ) {
-    bindings[from] = to;
+    bindings[from.ToLower()] = to.ToLower();
   }
 
   public void Unbind( string binding ) {
-    bindings.Remove( binding );
+    bindings.Remove( binding.ToLower() );
   }
 
   public int On(string evnt, Callback callback) {
+    evnt = evnt.ToLower();
+
     if( !this.events.ContainsKey(evnt) )
       this.events[evnt]=new ArrayList();
 
@@ -86,7 +103,7 @@ public class Dispatcher {
     Hashtable payload = referenceToHashtable[reference];
 
     Callback callback = (Callback)payload["callback"];
-    string evnt       = (string)payload["event"];
+    string evnt       = ((string)payload["event"]).ToLower();
 
     if( !this.events.ContainsKey(evnt) ){ Debug.Log("[ERROR][Dispatcher] Off: event doesn't exist"); return; } // THIS SHOULDN'T HAPPEN
 
