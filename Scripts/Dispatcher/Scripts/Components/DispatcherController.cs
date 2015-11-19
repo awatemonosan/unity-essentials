@@ -1,8 +1,8 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class DispatcherComponent : MonoBehaviour {
+public class DispatcherController : MonoBehaviour {
   private Dispatcher dispatcher = new Dispatcher();
   
   public bool IsHead = false;
@@ -11,7 +11,7 @@ public class DispatcherComponent : MonoBehaviour {
     get{
       if(this.IsHead) return this;
       DispatcherComponent up = this.Up;
-      if(up == null) return null;
+      if(up == null) return this;
       DispatcherComponent head = up.Head;
       if(head == null) return null;
       return head;

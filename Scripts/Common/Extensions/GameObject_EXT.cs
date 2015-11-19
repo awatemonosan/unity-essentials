@@ -50,17 +50,20 @@ public static class GameObject_EXT {
     return that.Up().Top();
   }
 
+  public static GameObjectExtension Ext(this GameObject that) {
+    GameObjectExtension ext = that.GetComponent<GameObjectExtension>();
+
+    if(ext == null)
+      ext = that.AddComponent<GameObjectExtension>();
+
+    return ext;
+  }
 /*===========================================================================*/
 // Data helpers
 /*===========================================================================*/
 
   public static Hashtable Data(this GameObject that) {
-    // TODO: Caching
-    GameObjectData data = that.GetComponent<GameObjectData>();
-    if(data == null){
-      data = that.AddComponent<GameObjectData>();
-    }
-    return data.data;
+    return that.Ext().data;
   }
 
 }
