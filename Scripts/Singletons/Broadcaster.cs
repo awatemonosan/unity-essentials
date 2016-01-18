@@ -5,7 +5,29 @@ using System.Collections;
 using System.Collections.Generic;
 // using Photon;
 
-public class DispatcherSeed : MonoBehaviour {
+public class Broadcaster : Singleton {
+  public static void Trigger(string evnt) {
+    Broadcaster.I.Trigger(evnt);
+  }
+  public static void Trigger(string evnt, Hashtable payload) {
+    Broadcaster.I.Trigger(evnt, payload);
+  }
+  public static void Trigger(Hashtable payload) {
+    Broadcaster.I.Trigger(payload);
+  }
+  public static void Bind( string from, string to ) {
+    Broadcaster.I.Bind(from, to);
+  }
+  public static void Unbind( string binding ) {
+    Broadcaster.I.Unbind(binding);
+  }
+  public static int On(string evnt, Callback callback) {
+    return Broadcaster.I.On(evnt, callback);
+  }
+  public static void Off(int reference) {
+    Broadcaster.I.Off(reference);
+  }
+
   public bool DebugInputs = false;
   private KeyCode[][] controllerCodes = new KeyCode[][] {
     // new KeyCode[] {
@@ -206,117 +228,155 @@ public class DispatcherSeed : MonoBehaviour {
   // };
 
   private KeyCode[] keyCodes = new KeyCode[] {
-    KeyCode.None, KeyCode.Backspace, KeyCode.Delete, KeyCode.Tab, KeyCode.Clear, KeyCode.Return, KeyCode.Pause, KeyCode.Escape, KeyCode.Space, KeyCode.Keypad0, KeyCode.Keypad1, KeyCode.Keypad2, KeyCode.Keypad3, KeyCode.Keypad4, KeyCode.Keypad5, KeyCode.Keypad6, KeyCode.Keypad7, KeyCode.Keypad8, KeyCode.Keypad9, KeyCode.KeypadPeriod, KeyCode.KeypadDivide, KeyCode.KeypadMultiply, KeyCode.KeypadMinus, KeyCode.KeypadPlus, KeyCode.KeypadEnter, KeyCode.KeypadEquals, KeyCode.UpArrow, KeyCode.DownArrow, KeyCode.RightArrow, KeyCode.LeftArrow, KeyCode.Insert, KeyCode.Home, KeyCode.End, KeyCode.PageUp, KeyCode.PageDown, KeyCode.F1, KeyCode.F2, KeyCode.F3, KeyCode.F4, KeyCode.F5, KeyCode.F6, KeyCode.F7, KeyCode.F8, KeyCode.F9, KeyCode.F10, KeyCode.F11, KeyCode.F12, KeyCode.F13, KeyCode.F14, KeyCode.F15, KeyCode.Alpha0, KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5, KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9, KeyCode.Exclaim, KeyCode.DoubleQuote, KeyCode.Hash, KeyCode.Dollar, KeyCode.Ampersand, KeyCode.Quote, KeyCode.LeftParen, KeyCode.RightParen, KeyCode.Asterisk, KeyCode.Plus, KeyCode.Comma, KeyCode.Minus, KeyCode.Period, KeyCode.Slash, KeyCode.Colon, KeyCode.Semicolon, KeyCode.Less, KeyCode.Equals, KeyCode.Greater, KeyCode.Question, KeyCode.At, KeyCode.LeftBracket, KeyCode.Backslash, KeyCode.RightBracket, KeyCode.Caret, KeyCode.Underscore, KeyCode.BackQuote, KeyCode.A, KeyCode.B, KeyCode.C, KeyCode.D, KeyCode.E, KeyCode.F, KeyCode.G, KeyCode.H, KeyCode.I, KeyCode.J, KeyCode.K, KeyCode.L, KeyCode.M, KeyCode.N, KeyCode.O, KeyCode.P, KeyCode.Q, KeyCode.R, KeyCode.S, KeyCode.T, KeyCode.U, KeyCode.V, KeyCode.W, KeyCode.X, KeyCode.Y, KeyCode.Z, KeyCode.Numlock, KeyCode.CapsLock, KeyCode.ScrollLock, KeyCode.RightShift, KeyCode.LeftShift, KeyCode.RightControl, KeyCode.LeftControl, KeyCode.RightAlt, KeyCode.LeftAlt, KeyCode.LeftCommand, KeyCode.LeftApple, KeyCode.LeftWindows, KeyCode.RightCommand, KeyCode.RightApple, KeyCode.RightWindows, KeyCode.AltGr, KeyCode.Help, KeyCode.Print, KeyCode.SysReq, KeyCode.Break, KeyCode.Menu
+    KeyCode.None,KeyCode.Backspace,KeyCode.Delete,KeyCode.Tab,KeyCode.Clear,
+    KeyCode.Return,KeyCode.Pause,KeyCode.Escape,KeyCode.Space,
+
+    KeyCode.Keypad0,KeyCode.Keypad1,KeyCode.Keypad2,KeyCode.Keypad3,
+    KeyCode.Keypad4,KeyCode.Keypad5,KeyCode.Keypad6,KeyCode.Keypad7,
+    KeyCode.Keypad8,KeyCode.Keypad9,KeyCode.KeypadPeriod,KeyCode.KeypadDivide,
+    KeyCode.KeypadMultiply,KeyCode.KeypadMinus,KeyCode.KeypadPlus,
+    KeyCode.KeypadEnter,KeyCode.KeypadEquals,
+
+    KeyCode.UpArrow,KeyCode.DownArrow,KeyCode.RightArrow,KeyCode.LeftArrow,
+
+    KeyCode.Insert,KeyCode.Home,KeyCode.End,KeyCode.PageUp,KeyCode.PageDown,
+
+    KeyCode.F1,KeyCode.F2,KeyCode.F3,KeyCode.F4,KeyCode.F5,KeyCode.F6,
+    KeyCode.F7,KeyCode.F8,KeyCode.F9,KeyCode.F10,KeyCode.F11,KeyCode.F12,
+    KeyCode.F13,KeyCode.F14,KeyCode.F15,
+
+    KeyCode.Alpha0,KeyCode.Alpha,KeyCode.Alpha2,KeyCode.Alpha3,KeyCode.Alpha4,
+    KeyCode.Alpha5,KeyCode.Alpha6,KeyCode.Alpha7,KeyCode.Alpha8,KeyCode.Alpha9,
+
+    KeyCode.Exclaim,KeyCode.DoubleQuote,KeyCode.Hash,KeyCode.Dollar,
+    KeyCode.Ampersand,KeyCode.Quote,KeyCode.LeftParen,KeyCode.RightParen,
+    KeyCode.Asterisk,KeyCode.Plus,KeyCode.Comma,KeyCode.Minus,KeyCode.Period,
+    KeyCode.Slash,KeyCode.Colon,KeyCode.Semicolon,KeyCode.Less,KeyCode.Equals,
+    KeyCode.Greater,KeyCode.Question,KeyCode.At,KeyCode.LeftBracket,
+    KeyCode.Backslash,KeyCode.RightBracket,KeyCode.Caret,KeyCode.Underscore,
+    KeyCode.BackQuote,
+
+    KeyCode.A,KeyCode.B,KeyCode.C,KeyCode.D,KeyCode.E,KeyCode.F,KeyCode.G,
+    KeyCode.H,KeyCode.I,KeyCode.J,KeyCode.K,KeyCode.L,KeyCode.M,KeyCode.N,
+    KeyCode.O,KeyCode.P,KeyCode.Q,KeyCode.R,KeyCode.S,KeyCode.T,KeyCode.U,
+    KeyCode.V,KeyCode.W,KeyCode.X,KeyCode.Y,KeyCode.Z,
+
+    KeyCode.Numlock,KeyCode.CapsLock,KeyCode.ScrollLock,KeyCode.RightShift,
+    KeyCode.LeftShift,KeyCode.RightControl,KeyCode.LeftControl,
+    KeyCode.RightAlt,KeyCode.LeftAlt,KeyCode.LeftCommand,KeyCode.LeftApple,
+    KeyCode.LeftWindows,KeyCode.RightCommand,KeyCode.RightApple,
+    KeyCode.RightWindows,KeyCode.AltGr,
+
+    KeyCode.Help,KeyCode.Print,KeyCode.SysReq,KeyCode.Break,KeyCode.Menu
   };
 
-  void Awake() {Initialize();BroadcastService.Trigger("unity.awake");}
-  void Start() {BroadcastService.Trigger("unity.start");}
-  void Update() {BroadcastService.Trigger("unity.update");}
-  void FixedUpdate() {BroadcastService.Trigger("unity.fixed_update");}
-  void LateUpdate() {BroadcastService.Trigger("unity.late_update");}
+  void Awake() {Initialize();}
+  void Start() {this.Trigger("unity.start");}
+  void Update() {this.Trigger("unity.update");}
+  void FixedUpdate() {this.Trigger("unity.fixed_update");}
+  void LateUpdate() {this.Trigger("unity.late_update");}
 
-  void OnConnectedToServer() {BroadcastService.Trigger("unity.client.connect");}
-  // void OnDestroy() {BroadcastService.Trigger("destroy");}
-  void OnDisconnectedFromServer() {BroadcastService.Trigger("unity.client.disconnect");}
-  void OnFailedToConnect() {BroadcastService.Trigger("unity.client.connect.fail");}
-  void OnFailedToConnectToMasterServer() {BroadcastService.Trigger("unity.tracker.connect.fail");}
-  void OnServerInitialized() {BroadcastService.Trigger("unity.server.start");}
-  void OnPlayerConnected() {BroadcastService.Trigger("unity.server.player.connect");}
-  void OnPlayerDisconnected() {BroadcastService.Trigger("unity.server.player.disconnect");}
-  void OnPostRender() {BroadcastService.Trigger("unity.render.late");}
-  void OnPreCull() {BroadcastService.Trigger("unity.render.pre_cull");}
-  void OnPreRender() {BroadcastService.Trigger("unity.render.before");}
-  void OnRenderObject() {BroadcastService.Trigger("unity.render");}
+  void OnConnectedToServer() {this.Trigger("unity.client.connect");}
+  void OnDisconnectedFromServer() {this.Trigger("unity.client.disconnect");}
+  void OnFailedToConnect() {this.Trigger("unity.client.connect.fail");}
+  void OnFailedToConnectToMasterServer() {this.Trigger("unity.tracker.connect.fail");}
+  void OnServerInitialized() {this.Trigger("unity.server.start");}
+  void OnPlayerConnected() {this.Trigger("unity.server.player.connect");}
+  void OnPlayerDisconnected() {this.Trigger("unity.server.player.disconnect");}
+  void OnPostRender() {this.Trigger("unity.render.late");}
+  void OnPreCull() {this.Trigger("unity.render.pre_cull");}
+  void OnPreRender() {this.Trigger("unity.render.before");}
+  void OnRenderObject() {this.Trigger("unity.render");}
   
   
   // Photon hooks
   // public override void OnConnectedToPhoton () {
-  //   BroadcastService.Trigger("photon.connect.success");
+  //   this.Trigger("photon.connect.success");
   // }
   // public override void OnFailedToConnectToPhoton (DisconnectCause cause) {
-  //   BroadcastService.Trigger("photon.connect.fail");
+  //   this.Trigger("photon.connect.fail");
   // }
   // public override void OnConnectionFail (DisconnectCause cause) {
-  //   BroadcastService.Trigger("photon.connect.fail");
+  //   this.Trigger("photon.connect.fail");
   // }
   // public override void OnDisconnectedFromPhoton () {
-  //   BroadcastService.Trigger("photon.disconnect");
+  //   this.Trigger("photon.disconnect");
   // }
 
   // public override void OnJoinedLobby () {
-  //   BroadcastService.Trigger("photon.lobby.joined");
+  //   this.Trigger("photon.lobby.joined");
   // }
   // public override void OnLeftLobby () {
-  //   BroadcastService.Trigger("photon.lobby.left");
+  //   this.Trigger("photon.lobby.left");
   // }
   // public override void OnLobbyStatisticsUpdate () {
-  //   BroadcastService.Trigger("photon.lobby.stat.updated");
+  //   this.Trigger("photon.lobby.stat.updated");
   // }
 
   // public override void OnCreatedRoom () {
-  //   BroadcastService.Trigger("photon.room.create.success");
+  //   this.Trigger("photon.room.create.success");
   // }
   // public override void OnPhotonCreateRoomFailed (object[] codeAndMsg) {
-  //   BroadcastService.Trigger("photon.room.create.fail");
+  //   this.Trigger("photon.room.create.fail");
   // }
   // public override void OnJoinedRoom () {
-  //   BroadcastService.Trigger("photon.room.join.success");
+  //   this.Trigger("photon.room.join.success");
   // }
   // public override void OnPhotonJoinRoomFailed (object[] codeAndMsg) {
-  //   BroadcastService.Trigger("photon.room.join.fail");
+  //   this.Trigger("photon.room.join.fail");
   // }
   // public override void OnPhotonRandomJoinFailed (object[] codeAndMsg) {
-  //   BroadcastService.Trigger("photon.room.random_join.fail");
+  //   this.Trigger("photon.room.random_join.fail");
   // }
   // public override void OnLeftRoom () {
-  //   BroadcastService.Trigger("photon.room.left");
+  //   this.Trigger("photon.room.left");
   // }
   // public override void OnPhotonPlayerConnected (PhotonPlayer newPlayer) {
-  //   BroadcastService.Trigger("photon.room.player.joined");
+  //   this.Trigger("photon.room.player.joined");
   // }
   // public override void OnPhotonPlayerDisconnected (PhotonPlayer otherPlayer) {
-  //   BroadcastService.Trigger("photon.room.player.left");
+  //   this.Trigger("photon.room.player.left");
   // }
   // // public override void OnPhotonCustomRoomPropertiesChanged (Hashtable propertiesThatChanged) {
-  // //   BroadcastService.Trigger("photon.room.property.changed");
+  // //   this.Trigger("photon.room.property.changed");
   // // }
   // public override void OnPhotonPlayerPropertiesChanged (object[] playerAndUpdatedProps) {
-  //   BroadcastService.Trigger("photon.player.property.changed");
+  //   this.Trigger("photon.player.property.changed");
   // }
 
   // public override void OnConnectedToMaster () {
-  //   BroadcastService.Trigger("photon.master.connected");
+  //   this.Trigger("photon.master.connected");
   // }
   // public override void OnMasterClientSwitched (PhotonPlayer newMasterClient) {
-  //   BroadcastService.Trigger("photon.master_client.switched");
+  //   this.Trigger("photon.master_client.switched");
   // }
   // public override void OnReceivedRoomListUpdate () {
-  //   BroadcastService.Trigger("photon.room_list.updated");
+  //   this.Trigger("photon.room_list.updated");
   // }
   // public override void OnPhotonInstantiate (PhotonMessageInfo info) {
-  //   BroadcastService.Trigger("photon.player.instantiated");
+  //   this.Trigger("photon.player.instantiated");
   // }
   // public override void OnPhotonMaxCccuReached () {
-  //   BroadcastService.Trigger("photon.max_ccc_reached");
+  //   this.Trigger("photon.max_ccc_reached");
   // }
   // public override void OnUpdatedFriendList () {
-  //   BroadcastService.Trigger("photon.friends.updated");
+  //   this.Trigger("photon.friends.updated");
   // }
   // public override void OnCustomAuthenticationFailed (string debugMessage) {
-  //   BroadcastService.Trigger("photon.auth.failed");
+  //   this.Trigger("photon.auth.failed");
   // }
   // //public override  void OnWebRpcResponse (OperationResponse response) {
-  // //   BroadcastService.Trigger("photon.web_rpc.response");
+  // //   this.Trigger("photon.web_rpc.response");
   // // }
   // public override void OnOwnershipRequest (object[] viewAndPlayer) {
-  //   BroadcastService.Trigger("photon.ownership_request");
+  //   this.Trigger("photon.ownership_request");
   // }
   
   void OnGUI() {
     Event e = Event.current;
-    BroadcastService.Trigger("unity.gui");
+    this.Trigger("unity.gui");
     do {
-      BroadcastService.Trigger("unity.gui."+e.type);
+      this.Trigger("unity.gui."+e.type);
     } while(Event.PopEvent(e));
   }
 
@@ -326,12 +386,11 @@ public class DispatcherSeed : MonoBehaviour {
     payload["src"] = src;
     payload["dest"] = dest;
 
-    BroadcastService.Trigger("unity.render.done", payload);
+    this.Trigger("unity.render.done", payload);
   }
 
   void Initialize() {
-    BroadcastService.On("Update", UpdateInputs);
-    BroadcastService.On("Update", UpdateGameObjects);
+    this.On("Update", UpdateInputs);
   }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -412,7 +471,7 @@ public class DispatcherSeed : MonoBehaviour {
 
       Hashtable payload = NewInputPayload(input);
       payload["event"] = "input.keyboard";
-      BroadcastService.Trigger(payload);
+      this.Trigger(payload);
     }
   }
 
@@ -433,7 +492,7 @@ public class DispatcherSeed : MonoBehaviour {
         payload["controller"] = controllerID;
         payload["button"] = buttonID;
 
-        BroadcastService.Trigger(payload);
+        this.Trigger(payload);
       }
     }
     //input.controller.#.axis.#.move
@@ -450,7 +509,7 @@ public class DispatcherSeed : MonoBehaviour {
         payload["controller"] = controllerID;
         payload["axis"] = axisID;
 
-        BroadcastService.Trigger(payload);
+        this.Trigger(payload);
       }
     }
   }
@@ -459,17 +518,6 @@ public class DispatcherSeed : MonoBehaviour {
     // Mouse
     // Differ("MouseX", Input.mousePosition.x, "Mouse", true);
     // Differ("MouseY", Input.mousePosition.y, "Mouse", true);
-  }
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  private Dictionary<GameObject, bool> gameObjects = new Dictionary<GameObject, bool>();
-  private void UpdateGameObjects(Hashtable payload){
-    foreach(GameObject gameObject in UnityEngine.Object.FindObjectsOfType(typeof(GameObject))){
-      if(!gameObjects.ContainsKey(gameObject)){
-        gameObject.GetDispatcher();// force loading of dispatcher
-        BroadcastService.Trigger("OnGameObjectInstantiated");
-        gameObjects[gameObject] = true;
-      }
-    }
   }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

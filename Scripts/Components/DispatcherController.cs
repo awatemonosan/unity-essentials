@@ -10,6 +10,7 @@ public class DispatcherController : MonoBehaviour {
     payload["keyframe"] = evnt;
     this.Trigger("keyframe", payload);
   }
+  
   public void Trigger(string evnt) {
     this.Trigger(evnt, new Hashtable( ));
   }
