@@ -59,14 +59,14 @@ public static class DispatcherExtensions {
     return that.gameObject.On(evnt, callback);
   }
 
-  public static bool Off(this GameObject that, string evnt, Callback callback) {
-    return that.GetDispatcher().Off(evnt, callback);
+  public static void Off(this GameObject that, int callbackID) {
+    that.GetDispatcher().Off(callbackID);
   }
-  public static bool Off(this Transform that, string evnt, Callback callback) {
-    return that.gameObject.Off(evnt, callback);
+  public static void Off(this Transform that, int callbackID) {
+    that.gameObject.Off(callbackID);
   }
-  public static bool Off(this MonoBehaviour that, string evnt, Callback callback) {
-    return that.gameObject.Off(evnt, callback);
+  public static void Off(this MonoBehaviour that, int callbackID) {
+    that.gameObject.Off(callbackID);
   }
 
 }

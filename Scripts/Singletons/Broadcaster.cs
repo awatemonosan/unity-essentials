@@ -5,28 +5,28 @@ using System.Collections;
 using System.Collections.Generic;
 // using Photon;
 
-public class Broadcaster : Singleton {
-  public static void Trigger(string evnt) {
-    Broadcaster.I.Trigger(evnt);
-  }
-  public static void Trigger(string evnt, Hashtable payload) {
-    Broadcaster.I.Trigger(evnt, payload);
-  }
-  public static void Trigger(Hashtable payload) {
-    Broadcaster.I.Trigger(payload);
-  }
-  public static void Bind( string from, string to ) {
-    Broadcaster.I.Bind(from, to);
-  }
-  public static void Unbind( string binding ) {
-    Broadcaster.I.Unbind(binding);
-  }
-  public static int On(string evnt, Callback callback) {
-    return Broadcaster.I.On(evnt, callback);
-  }
-  public static void Off(int reference) {
-    Broadcaster.I.Off(reference);
-  }
+public class Broadcaster : Singleton<Broadcaster> {
+  // public static void Trigger(string evnt) {
+  //   Broadcaster.I.Trigger(evnt);
+  // }
+  // public static void Trigger(string evnt, Hashtable payload) {
+  //   Broadcaster.I.Trigger(evnt, payload);
+  // }
+  // public static void Trigger(Hashtable payload) {
+  //   Broadcaster.I.Trigger(payload);
+  // }
+  // public static void Bind( string from, string to ) {
+  //   Broadcaster.I.Bind(from, to);
+  // }
+  // public static void Unbind( string binding ) {
+  //   Broadcaster.I.Unbind(binding);
+  // }
+  // public static int On(string evnt, Callback callback) {
+  //   return Broadcaster.I.On(evnt, callback);
+  // }
+  // public static void Off(int reference) {
+  //   Broadcaster.I.Off(reference);
+  // }
 
   public bool DebugInputs = false;
   private KeyCode[][] controllerCodes = new KeyCode[][] {
@@ -245,7 +245,7 @@ public class Broadcaster : Singleton {
     KeyCode.F7,KeyCode.F8,KeyCode.F9,KeyCode.F10,KeyCode.F11,KeyCode.F12,
     KeyCode.F13,KeyCode.F14,KeyCode.F15,
 
-    KeyCode.Alpha0,KeyCode.Alpha,KeyCode.Alpha2,KeyCode.Alpha3,KeyCode.Alpha4,
+    KeyCode.Alpha0,KeyCode.Alpha1,KeyCode.Alpha2,KeyCode.Alpha3,KeyCode.Alpha4,
     KeyCode.Alpha5,KeyCode.Alpha6,KeyCode.Alpha7,KeyCode.Alpha8,KeyCode.Alpha9,
 
     KeyCode.Exclaim,KeyCode.DoubleQuote,KeyCode.Hash,KeyCode.Dollar,

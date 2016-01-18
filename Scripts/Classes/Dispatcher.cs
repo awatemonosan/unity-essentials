@@ -15,7 +15,7 @@ public class Dispatcher {
   private static int eventID = 0;
 
   private int lastEventID = -1;
-
+  
   public void Trigger(string evnt) {
     this.Trigger(evnt, new Hashtable( ));
   }

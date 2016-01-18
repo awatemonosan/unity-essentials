@@ -13,14 +13,14 @@ public class MetaObject : Dispatcher {
     get { return _id; }
   }
 
-  public MetaObject() {
+  MetaObject() {
     this._id = next_id++;
     metaObjects[this._id] = this;
-    _callbackID = Dispatcher.On("all", this.Trigger);
+    _callbackID = Broadcaster.I.On("all", this.Trigger);
   }
 
-  public ~MetaObject() {
-    Dispatcher.Off(_callbackID);
+  ~MetaObject() {
+    Broadcaster.I.Off(_callbackID);
     this.Trigger("destroy");
   }
 }

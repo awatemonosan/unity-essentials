@@ -8,14 +8,14 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
   public static T I {
     get { return Instance; }
   }
-  
+
   public static T Instance {
     get {
       if (isQuitting) return null;
  
       lock(_lock) {
         if (_instance == null) {
-          T instances[] = FindObjectsOfType(typeof(T));
+          T[] instances = (T[])FindObjectsOfType(typeof(T));
           _instance = instances[0];
  
           if ( instances.Length > 1 ) return _instance;
@@ -35,7 +35,7 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
   }
 
   public static void EnsureExists(){
-    T i = this.Instance;
+    T i = Instance;
   }
 
   public void OnDestroy () {
