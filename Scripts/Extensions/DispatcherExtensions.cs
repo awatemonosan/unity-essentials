@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public static class Dispatcher_EXT {
+public static class DispatcherExtensions {
   public static DispatcherController GetDispatcher(this GameObject that) {
     DispatcherController dispatcher = that.GetComponent<DispatcherController>();
 

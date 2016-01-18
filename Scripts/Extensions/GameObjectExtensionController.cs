@@ -2,18 +2,19 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class ConstructObjectController : MonoBehaviourExtended {
+public class GameObjectExtensionController : MonoBehaviour {
   static int nextID = 0;
+
+  public Hashtable data = new Hashtable( );
 
   private int _ID;
   public int ID {
     get {
-      return this._ID;
+      return _ID;
     }
   }
 
   void Start( ) {
-    this.gameObject.Ext();
     this._ID = nextID++;
   }
 }

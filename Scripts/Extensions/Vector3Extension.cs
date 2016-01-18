@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public static class Vector3_EXT {
+public static class Vector3Extension {
   
   public static Vector3 Random(this Vector3 that){
     Vector3 v = new Vector3();

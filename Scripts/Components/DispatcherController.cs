@@ -2,30 +2,8 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class DispatcherController : MonoBehaviourExtended {
+public class DispatcherController : MonoBehaviour {
   private Dispatcher dispatcher = new Dispatcher();
-  
-  public bool IsHead = false;
-
-  public DispatcherController Head {
-    get{
-      if(this.IsHead) return this;
-      DispatcherController up = this.Up;
-      if(up == null) return this;
-      DispatcherController head = up.Head;
-      if(head == null) return null;
-      return head;
-    }
-  }
-
-  public DispatcherController Up {
-    get{
-      if(this.IsHead) return null;
-      Transform parent = this.transform.parent;
-      if(parent == null) return null;
-      return parent.GetDispatcher();
-    }
-  }
 
   public void AnimKeyframe(string evnt) {
     Hashtable payload = new Hashtable( );
@@ -63,14 +41,11 @@ public class DispatcherController : MonoBehaviourExtended {
   }
 
   private void SendUp(Hashtable payload) {
-    if(this.Up) this.Up.Trigger(payload);
+    DispatcherController up = this.transform.Up().GetComponent<DispatcherController>();;
+    if(up) up.Trigger(payload);
   }
 
   public void Start() {
     this.On("every", this.SendUp);
-  }
-
-  public void Update() {
-    this.Trigger("update");
   }
 }
