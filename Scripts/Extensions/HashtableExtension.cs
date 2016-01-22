@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 
 public static class HashtableExtension {
-  public static string Serialize(this Hashtable that){
-    return easy.JSON.JsonEncode(that);
+  public static string ToString(this Hashtable that){
+    return JSON.Serialize(that);
   }
 
   public static bool HasCycle(this Hashtable that){
@@ -60,10 +60,10 @@ public static class HashtableExtension {
     return (T)that[key];
   }
   public static string GetString(this Hashtable that, object key) { return that.GetAs<string>(key); }
-  public static int GetInt(this Hashtable that, object key) { return (int)that.Get(key); }
-  public static float GetFloat(this Hashtable that, object key) { return (float)that.Get(key); }
-  public static bool GetBool(this Hashtable that, object key) { return (bool)that.Get(key); }
-  public static Hashtable GetHashtable(this Hashtable that, object key) { return (Hashtable)that.Get(key); }
+  public static int GetInt(this Hashtable that, object key) { return that.GetAs<int>(key); }
+  public static float GetFloat(this Hashtable that, object key) { return that.GetAs<float>(key); }
+  public static bool GetBool(this Hashtable that, object key) { return that.GetAs<bool>(key); }
+  public static Hashtable GetChild(this Hashtable that, object key) { return that.GetAs<Hashtable>(key); }
 
 //Setter
   public static void Set(this Hashtable that, object key, object value){
@@ -82,8 +82,22 @@ public static class HashtableExtension {
   public static void SetBool(this Hashtable that, object key, bool value) {
     that.Set(key,value);
   }
-  public static void SetHashtable(this Hashtable that, object key, Hashtable value) {
+  public static void SetChild(this Hashtable that, object key, Hashtable value) {
     that.Set(key,value);
   }
+  public static void NewChild(this Hashtable that, object key){
+    that.Set(key, new Hashtable());
+  }
 
+  public static bool HasKey(this Hashtable that, string key){
+    return that.Contains(key);
+  }
+
+  public static void Load(this Hashtable that, string path){
+
+  }
+
+  public static void Save(this Hashtable that, string path){
+
+  }
 }

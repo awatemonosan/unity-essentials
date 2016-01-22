@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
  
-public class WebService {
+public class Web {
   public static string Get(string url){
     return (new WWW(url)).text;
   }
@@ -12,7 +12,7 @@ public class WebService {
   public static string Post(string url, Hashtable payload){
     Dictionary<string, string> headers = new Dictionary<string, string>();
     headers.Add( "Content-Type", "application/json" );
-    string payload_stringified = payload.Serialize();
+    string payload_stringified = JSON.Serialize(payload);
     return ( new WWW(url, payload_stringified.ToBytes(), headers) ).text;
   }
 
