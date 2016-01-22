@@ -15,7 +15,7 @@ public class Dispatcher {
   private static int eventID = 0;
 
   private int lastEventID = -1;
-  
+
   public void Trigger(string evnt) {
     this.Trigger(evnt, new Hashtable( ));
   }
@@ -58,12 +58,16 @@ public class Dispatcher {
         }
       }
       // Trigger every
-      if(this.events.ContainsKey("every")){
-        foreach(Callback callback in this.events["every"]) {
+      if(this.events.ContainsKey("all")){
+        foreach(Callback callback in this.events["all"]) {
           callback(payload);
         }
       }
     }
+  }
+
+  public int Bridge(Dispatcher other){
+    return other.On("all", this.Trigger);
   }
 
   public void Bind( string from, string to ) {
