@@ -27,23 +27,23 @@ public static class HashtableExtension {
     return false;
   }
 
-  public static string JSON(this Hashtable that)
-  {
-    string s = "{";
-    bool first = true;
+  // public static string ToJSON(this Hashtable that)
+  // {
+  //   string s = "{";
+  //   bool first = true;
 
-    foreach(DictionaryEntry entry in that) {
-      s = s + ""; // TODO: New Line
-      if(!first){
-        s = s + ", ";
-      }
-      first = false;
-      s = s + entry.Key + ": \"" + entry.Value + "\"";
-    }
+  //   foreach(DictionaryEntry entry in that) {
+  //     s = s + ""; // TODO: New Line
+  //     if(!first){
+  //       s = s + ", ";
+  //     }
+  //     first = false;
+  //     s = s + entry.Key + ": \"" + entry.Value + "\"";
+  //   }
 
-    s = s + "\r}";
-    return s;
-  }
+  //   s = s + "\r}";
+  //   return s;
+  // }
 
   public static void Merge(this Hashtable that, Hashtable other)
   {

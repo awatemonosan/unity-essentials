@@ -13,6 +13,8 @@ public class Backend : Dispatcher {
 
   public Backend(string ipAddress, int port) {
     // endpoint = new IPEndPoint(IPAddress.Parse(ipAddress), port);
+    this.EnableTimedTriggers();
+
     endpoint = new IPEndPoint(IPAddress.Parse(ipAddress), port);
     client = new UdpClient();
     client.Connect(endpoint);
@@ -26,13 +28,13 @@ public class Backend : Dispatcher {
     Byte[] receiveBytes  = client.EndReceive(ar, ref endpoint);
     string receiveString = Encoding.ASCII.GetString(receiveBytes);
 
-    Debug.Log(receiveString);
+    Debug.Log("I GOT " + receiveString);
 
     Hashtable payload    = receiveString.Parse();
     payload["source_ip"]   = endpoint.Address.ToString();
     payload["source_port"] = endpoint.Port;
 
-    this.Trigger(payload);
+    this.TriggerIn(payload, 0);
     client.BeginReceive(new AsyncCallback(OnMessageRecieved), null);
   }
 
@@ -48,7 +50,7 @@ public class Backend : Dispatcher {
   }
 
   public void SendRaw(Hashtable payload) {
-    string message = payload.Serialize();
+    string message = JSON.Serialize(payload);
     SendRaw(message);
   }
   public void SendRaw(string message) {

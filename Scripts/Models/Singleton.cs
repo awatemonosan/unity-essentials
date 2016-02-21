@@ -16,16 +16,15 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
       lock(_lock) {
         if (_instance == null) {
           T[] instances = (T[])FindObjectsOfType(typeof(T));
-          _instance = instances[0];
- 
-          if ( instances.Length > 1 ) return _instance;
- 
-          if (_instance == null) {
+
+          if (instances.Length == 0) {
             GameObject singleton = new GameObject();
             singleton.name = typeof(T).ToString();
             DontDestroyOnLoad(singleton);
 
             _instance = singleton.AddComponent<T>();
+          } else {
+            _instance = instances[0];
           }
         }
  

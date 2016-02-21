@@ -1,4 +1,6 @@
 using UnityEngine;
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -9,13 +11,66 @@ public class Dispatcher {
   private Dictionary<      int, Hashtable> referenceToHashtable = new Dictionary<      int, Hashtable>( );
   private Dictionary<Hashtable, int      > hashtableToReference = new Dictionary<Hashtable, int      >( );
   private Dictionary<   string, string   > bindings             = new Dictionary<   string, string   >( );
-
+  
   private int nextReference = 0;
 
   private static int eventID = 0;
 
   private int lastEventID = -1;
 
+  private int updateCallbackReference = -1;
+
+  ~Dispatcher(){
+    DisableTimedTriggers();
+  }
+
+  public void EnableTimedTriggers(){
+    Debug.Log("Timed Triggers enabled");
+    if(updateCallbackReference == -1)
+      updateCallbackReference = Broadcaster.I.On("update", ProcessTimedTriggers);
+  }
+
+  public void DisableTimedTriggers(){
+    if(updateCallbackReference >= 0){
+      Broadcaster.I.Off(updateCallbackReference);
+      updateCallbackReference = -1;
+    }
+  }
+
+  private Dictionary<long, ArrayList> timedTriggers = new Dictionary<long, ArrayList>( );
+  public void ProcessTimedTriggers(Hashtable _){
+    long currentTime = DateTime.Now.Ticks;
+
+    List<long> toTrigger = new List<long>();
+
+    foreach(KeyValuePair<long, ArrayList> entry in timedTriggers) {
+      if(currentTime > entry.Key)
+        toTrigger.Add(entry.Key);
+    }
+
+    foreach(long key in toTrigger){
+      foreach(Hashtable payload in timedTriggers[key])
+        Trigger(payload);
+
+      timedTriggers.Remove(key);
+    }
+  }
+
+  public void TriggerIn(Hashtable payload, float time){
+    TriggerIn(payload, (long)(time*1000));
+  }
+  public void TriggerAt(Hashtable payload, float time){
+    TriggerAt(payload, (long)(time*1000));
+  }
+  public void TriggerIn(Hashtable payload, long time){
+    TriggerAt(payload, DateTime.Now.Ticks+time);
+  }
+  public void TriggerAt(Hashtable payload, long time){
+    Debug.Log("oooo spooky");
+    if(!timedTriggers.ContainsKey(time)) timedTriggers[time] = new ArrayList();
+
+    timedTriggers[time].Add(payload);
+  }
   public void Trigger(string evnt) {
     this.Trigger(evnt, new Hashtable( ));
   }

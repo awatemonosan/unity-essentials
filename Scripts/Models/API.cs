@@ -9,10 +9,10 @@ public class API {
   }
 
   public Hashtable Get(string path){
-    return WebService.Get(url+path).Parse();
+    return Web.Get(url+path).Parse();
   }
 
   public Hashtable Post(string path, Hashtable payload){
-    return WebService.Post(url+path, payload).Parse();;
+    return Web.Post(url+path, payload).Parse();;
   }
 }

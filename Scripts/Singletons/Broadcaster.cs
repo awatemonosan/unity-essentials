@@ -271,22 +271,22 @@ public class Broadcaster : Singleton<Broadcaster> {
   };
 
   void Awake() {Initialize();}
-  void Start() {this.Trigger("unity.start");}
-  void Update() {this.Trigger("unity.update");}
-  void FixedUpdate() {this.Trigger("unity.fixed_update");}
-  void LateUpdate() {this.Trigger("unity.late_update");}
+  void Start() {this.Trigger("start");}
+  void Update() {this.Trigger("update");}
+  void FixedUpdate() {this.Trigger("fixed_update");}
+  void LateUpdate() {this.Trigger("late_update");}
 
-  void OnConnectedToServer() {this.Trigger("unity.client.connect");}
-  void OnDisconnectedFromServer() {this.Trigger("unity.client.disconnect");}
-  void OnFailedToConnect() {this.Trigger("unity.client.connect.fail");}
-  void OnFailedToConnectToMasterServer() {this.Trigger("unity.tracker.connect.fail");}
-  void OnServerInitialized() {this.Trigger("unity.server.start");}
-  void OnPlayerConnected() {this.Trigger("unity.server.player.connect");}
-  void OnPlayerDisconnected() {this.Trigger("unity.server.player.disconnect");}
-  void OnPostRender() {this.Trigger("unity.render.late");}
-  void OnPreCull() {this.Trigger("unity.render.pre_cull");}
-  void OnPreRender() {this.Trigger("unity.render.before");}
-  void OnRenderObject() {this.Trigger("unity.render");}
+  void OnConnectedToServer() {this.Trigger("client.connect");}
+  void OnDisconnectedFromServer() {this.Trigger("client.disconnect");}
+  void OnFailedToConnect() {this.Trigger("client.connect.fail");}
+  void OnFailedToConnectToMasterServer() {this.Trigger("tracker.connect.fail");}
+  void OnServerInitialized() {this.Trigger("server.start");}
+  void OnPlayerConnected() {this.Trigger("server.player.connect");}
+  void OnPlayerDisconnected() {this.Trigger("server.player.disconnect");}
+  void OnPostRender() {this.Trigger("render.late");}
+  void OnPreCull() {this.Trigger("render.pre_cull");}
+  void OnPreRender() {this.Trigger("render.before");}
+  void OnRenderObject() {this.Trigger("render");}
   
   
   // Photon hooks
@@ -374,9 +374,9 @@ public class Broadcaster : Singleton<Broadcaster> {
   
   void OnGUI() {
     Event e = Event.current;
-    this.Trigger("unity.gui");
+    this.Trigger("gui");
     do {
-      this.Trigger("unity.gui."+e.type);
+      this.Trigger("gui."+e.type);
     } while(Event.PopEvent(e));
   }
 
@@ -386,11 +386,11 @@ public class Broadcaster : Singleton<Broadcaster> {
     payload["src"] = src;
     payload["dest"] = dest;
 
-    this.Trigger("unity.render.done", payload);
+    this.Trigger("render.done", payload);
   }
 
   void Initialize() {
-    this.On("Update", UpdateInputs);
+    // this.On("update", UpdateInputs);
   }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
