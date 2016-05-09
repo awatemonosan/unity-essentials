@@ -19,6 +19,9 @@ public class PData {
     r.Close();
     return raw;
   }
+  public static void Save(string path, Hashtable payload){
+    Save(path, payload.Serialize());
+  }
   public static void Save(string path, string raw){
     StreamWriter w = new StreamWriter(CompletePath(path));
     w.Write(raw);

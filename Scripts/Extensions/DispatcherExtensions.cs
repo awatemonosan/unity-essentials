@@ -17,14 +17,11 @@ public static class DispatcherExtensions {
     return that.gameObject.GetDispatcher();
   }
 
-
+// Trigger
   public static void Trigger(this GameObject that,    string evnt) {
     that.GetDispatcher().Trigger(evnt);
   }
   public static void Trigger(this Transform that,     string evnt) {
-    that.gameObject.Trigger(evnt);
-  }
-  public static void Trigger(this MonoBehaviour that, string evnt) {
     that.gameObject.Trigger(evnt);
   }
 
@@ -34,9 +31,6 @@ public static class DispatcherExtensions {
   public static void Trigger(this Transform that,     Hashtable payload) {
     that.gameObject.Trigger(payload);
   }
-  public static void Trigger(this MonoBehaviour that, Hashtable payload) {
-    that.gameObject.Trigger(payload);
-  }
 
   public static void Trigger(this GameObject that,    string evnt, Hashtable payload) {
     that.GetDispatcher().Trigger(evnt, payload);
@@ -44,29 +38,45 @@ public static class DispatcherExtensions {
   public static void Trigger(this Transform that,     string evnt, Hashtable payload) {
     that.gameObject.Trigger(evnt, payload);
   }
-  public static void Trigger(this MonoBehaviour that, string evnt, Hashtable payload) {
-    that.gameObject.Trigger(evnt, payload);
-  }
   
+// On
+  public static int count = 0;
 
   public static int On(this GameObject that,  string evnt, Callback callback) {
     return that.GetDispatcher().On(evnt, callback);
   }
+  public static int On(this GameObject that,  string evnt, Callback callback, Hashtable payload) {
+    Debug.Log(evnt);
+    return that.GetDispatcher().On(evnt, callback, payload);
+  }
+
   public static int On(this Transform that, string evnt, Callback callback) {
     return that.gameObject.On(evnt, callback);
   }
-  public static int On(this MonoBehaviour that, string evnt, Callback callback) {
-    return that.gameObject.On(evnt, callback);
+  public static int On(this Transform that, string evnt, Callback callback, Hashtable payload) {
+    return that.gameObject.On(evnt, callback, payload);
   }
 
+// Off
   public static void Off(this GameObject that, int callbackID) {
     that.GetDispatcher().Off(callbackID);
   }
   public static void Off(this Transform that, int callbackID) {
     that.gameObject.Off(callbackID);
   }
-  public static void Off(this MonoBehaviour that, int callbackID) {
-    that.gameObject.Off(callbackID);
-  }
+
+  // public static void Bind(this GameObject that, string from, string to) {
+  //   that.gameObject.Bind(from, to);
+  // }
+  // public static void Bind(this Transform that, string from, string to) {
+  //   that.gameObject.Bind(from, to);
+  // }
+
+  // public static void Unbind(this GameObject that, string binding) {
+  //   that.gameObject.Unbind(binding);
+  // }
+  // public static void Unbind(this Transform that, string binding) {
+  //   that.gameObject.Unbind(binding);
+  // }
 
 }

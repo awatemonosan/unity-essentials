@@ -6,11 +6,27 @@ using System.Collections.Generic;
 
 public delegate void Callback(Hashtable payload);
 
+public class CallbackDetail {
+  public string eventName;
+  public Callback callback;
+  public Hashtable defaultPayload;
+
+  public CallbackDetail(string eventName, Callback callback, Hashtable payload){
+    this.eventName = eventName;
+    this.callback = callback;
+    this.defaultPayload = payload;
+  }
+
+  public void Trigger(Hashtable payload){
+    Hashtable combinedPayload = this.defaultPayload.Copy().Merge(payload);
+
+    callback(combinedPayload);
+  }
+}
+
 public class Dispatcher {
-  private Dictionary<   string, ArrayList> events               = new Dictionary<   string, ArrayList>( );
-  private Dictionary<      int, Hashtable> referenceToHashtable = new Dictionary<      int, Hashtable>( );
-  private Dictionary<Hashtable, int      > hashtableToReference = new Dictionary<Hashtable, int      >( );
-  private Dictionary<   string, string   > bindings             = new Dictionary<   string, string   >( );
+  private Dictionary<string, Dictionary<int, CallbackDetail> > callbackCatagories = new Dictionary<string, Dictionary<int, CallbackDetail> >( );
+  private Dictionary<      int, String> referenceToEventName = new Dictionary<      int, String>( );
   
   private int nextReference = 0;
 
@@ -18,7 +34,7 @@ public class Dispatcher {
 
   private int lastEventID = -1;
 
-  private int updateCallbackReference = -1;
+  private int updateCallbackDetailReference = -1;
 
   ~Dispatcher(){
     DisableTimedTriggers();
@@ -26,14 +42,14 @@ public class Dispatcher {
 
   public void EnableTimedTriggers(){
     Debug.Log("Timed Triggers enabled");
-    if(updateCallbackReference == -1)
-      updateCallbackReference = Broadcaster.I.On("update", ProcessTimedTriggers);
+    if(updateCallbackDetailReference == -1)
+      updateCallbackDetailReference = Broadcaster.On("update", ProcessTimedTriggers);
   }
 
   public void DisableTimedTriggers(){
-    if(updateCallbackReference >= 0){
-      Broadcaster.I.Off(updateCallbackReference);
-      updateCallbackReference = -1;
+    if(updateCallbackDetailReference >= 0){
+      Broadcaster.Off(updateCallbackDetailReference);
+      updateCallbackDetailReference = -1;
     }
   }
 
@@ -66,19 +82,18 @@ public class Dispatcher {
     TriggerAt(payload, DateTime.Now.Ticks+time);
   }
   public void TriggerAt(Hashtable payload, long time){
-    Debug.Log("oooo spooky");
     if(!timedTriggers.ContainsKey(time)) timedTriggers[time] = new ArrayList();
 
     timedTriggers[time].Add(payload);
   }
-  public void Trigger(string evnt) {
-    this.Trigger(evnt, new Hashtable( ));
+  public void Trigger(string eventName) {
+    this.Trigger(eventName, new Hashtable());
   }
-  public void Trigger(string evnt, Hashtable payload) {
-    payload["event"] = evnt;
+  public void Trigger(string eventName, Hashtable payload) {
+    payload["event"] = eventName;
     this.Trigger(payload);
   }
-  public void Trigger(Hashtable payload) {    
+  public void Trigger(Hashtable payload) {
     if(!payload.ContainsKey("eventID")) {
       payload["eventID"] = eventID;
       eventID++;
@@ -89,35 +104,42 @@ public class Dispatcher {
     this.lastEventID = (int)payload["eventID"];
 
     if(payload["event"] == null) return;
-    string evnt = ((string)payload["event"]);
-    payload["event"] = evnt = evnt.ToLower();
+    string eventName = ((string)payload["event"]);
+    payload["event"] = eventName = eventName.ToLower();
 
-    if(this.bindings.ContainsKey(evnt))
-      Trigger(this.bindings[evnt]);
+    // if(this.bindings.ContainsKey(eventName))
+    //   Trigger(this.bindings[eventName]);
 
     // If all
-    if(evnt=="all") {
+    if(eventName=="all") {
       // retrigger all
-      foreach(KeyValuePair<string, ArrayList> entry in this.events) {
-        ArrayList callbacks = entry.Value;
-        foreach(Callback callback in callbacks) {
-          callback(payload);
+      foreach(KeyValuePair<string, Dictionary<int, CallbackDetail>> entry in this.callbackCatagories) {
+        Dictionary<int, CallbackDetail> callbackDetails = entry.Value;
+        foreach(KeyValuePair<int, CallbackDetail> entry2 in callbackDetails) {
+          entry2.Value.Trigger(payload);
         }
       }
     // Else
     } else {
       // Trigger event
-      if(this.events.ContainsKey(evnt)) {
-        foreach(Callback callback in this.events[evnt]) {
-          callback(payload);
+      if(this.callbackCatagories.ContainsKey(eventName)) {
+        foreach(KeyValuePair<int, CallbackDetail> entry in this.callbackCatagories[eventName]) {
+          entry.Value.Trigger(payload);
         }
       }
       // Trigger every
-      if(this.events.ContainsKey("all")){
-        foreach(Callback callback in this.events["all"]) {
-          callback(payload);
+      if(this.callbackCatagories.ContainsKey("all")){
+        foreach(KeyValuePair<int, CallbackDetail> entry in this.callbackCatagories["all"]) {
+          entry.Value.Trigger(payload);
         }
       }
+    }
+
+    // Recurse over parent callbackCatagories if '.' is present
+    int lastPeriod = eventName.LastIndexOf('.');
+    if(lastPeriod != -1){
+      eventName = eventName.Substring(0, lastPeriod);
+      Trigger(eventName, payload);
     }
   }
 
@@ -125,54 +147,29 @@ public class Dispatcher {
     return other.On("all", this.Trigger);
   }
 
-  public void Bind( string from, string to ) {
-    bindings[from.ToLower()] = to.ToLower();
+  public int On(string eventName, Callback callback) {
+    return this.On(eventName, callback, new Hashtable());
   }
 
-  public void Unbind( string binding ) {
-    bindings.Remove( binding.ToLower() );
-  }
+  public int On(string eventName, Callback callback, Hashtable payload) {
+    eventName = eventName.ToLower();
 
-  public int On(string evnt, Callback callback) {
-    evnt = evnt.ToLower();
+    if (!this.callbackCatagories.ContainsKey(eventName)) {
+      this.callbackCatagories[eventName] = new Dictionary<int, CallbackDetail>();
+    }
 
-    if( !this.events.ContainsKey(evnt) )
-      this.events[evnt]=new ArrayList();
+    CallbackDetail callbackDetail = new CallbackDetail(eventName, callback, payload);
 
-    ArrayList callbacks = this.events[evnt];
-
-    if( callbacks.Contains(callback) ) return -1;
-    
-    Hashtable payload = new Hashtable();
-
-    payload["callback"] = callback;
-    payload["event"]    = evnt;
-
-    referenceToHashtable[nextReference] = payload;
-    hashtableToReference[payload]       = nextReference;
-
-    callbacks.Add(callback);
+/// TODO THIS SHITS ALL FUCKED FIGURE IT OUT
+    this.referenceToEventName[nextReference] = eventName;
+    this.callbackCatagories[eventName][nextReference] = callbackDetail;
 
     return nextReference++;
   }
 
   public void Off(int reference) {
-    if( !referenceToHashtable.ContainsKey(reference) ) return;
-
-    Hashtable payload = referenceToHashtable[reference];
-
-    Callback callback = (Callback)payload["callback"];
-    string evnt       = ((string)payload["event"]).ToLower();
-
-    if( !this.events.ContainsKey(evnt) ){ Debug.Log("[ERROR][Dispatcher] Off: event doesn't exist"); return; } // THIS SHOULDN'T HAPPEN
-
-    ArrayList callbacks = this.events[evnt];
-
-    if( !callbacks.Contains(callback) ){ Debug.Log("[ERROR][Dispatcher] Off: callback doesn't exist"); return; } // THIS SHOULDN'T HAPPEN
-
-    referenceToHashtable.Remove(reference);
-    hashtableToReference.Remove(payload);
-
-    callbacks.Remove(callback);
+    string eventName = this.referenceToEventName[reference];
+    this.callbackCatagories[eventName].Remove(reference);
+    this.referenceToEventName.Remove(reference);
   }
 }

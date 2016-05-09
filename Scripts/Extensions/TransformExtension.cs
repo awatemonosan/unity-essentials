@@ -11,6 +11,22 @@ public static class TransformExtension {
 
     return that.gameObject.AddComponent<TransformExtensionController>();
   }
+  public static void SetExclusiveChild(this Transform that, string name){
+    Transform childTransform = that.Find(name);
+    GameObject child = childTransform.gameObject;
+    if(child == null) return;
+
+    for(int i=0; i<that.childCount; i++){
+      GameObject other = that.GetChild(i).gameObject;
+
+      if(child==other) continue;
+      if(other.activeSelf == false) continue;
+      other.SetActive(false);
+    }
+
+    if(child.activeSelf == false) return;
+    child.SetActive(true);
+  }
   public static Transform Up(this Transform that) {
     if(that.parent != null)
       return that.parent;

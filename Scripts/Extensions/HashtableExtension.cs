@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public static class HashtableExtension {
-  public static string ToString(this Hashtable that){
+  public static string Serialize(this Hashtable that){
     return JSON.Serialize(that);
   }
 
@@ -45,19 +45,29 @@ public static class HashtableExtension {
   //   return s;
   // }
 
-  public static void Merge(this Hashtable that, Hashtable other)
+  public static Hashtable Merge(this Hashtable that, Hashtable other)
   {
     foreach (DictionaryEntry entry in other)
     {
       that[entry.Key] = entry.Value;
     }
+    return that;
   }
+
+  public static Hashtable Copy(this Hashtable that){
+    return (new Hashtable()).Merge(that);
+  }
+  
 //Getters
   public static object Get(this Hashtable that, object key) {
     return that[key];
   }
   public static T GetAs<T>(this Hashtable that, object key) {
-    return (T)that[key];
+    if (that.Contains(key)) {
+      return (T)that[key];
+    } else {
+      return default(T);
+    }
   }
   public static string GetString(this Hashtable that, object key) { return that.GetAs<string>(key); }
   public static int GetInt(this Hashtable that, object key) { return that.GetAs<int>(key); }

@@ -7,11 +7,11 @@ public class MetaObject : Dispatcher {
   private int _callbackID;
 
   public MetaObject() {
-    _callbackID = Broadcaster.I.On("all", this.Trigger);
+    _callbackID = Broadcaster.On("all", this.Trigger);
   }
 
   ~MetaObject() {
-    Broadcaster.I.Off(_callbackID);
+    Broadcaster.Off(_callbackID);
     this.Trigger("destroy");
   }
 }

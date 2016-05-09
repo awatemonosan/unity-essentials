@@ -29,24 +29,36 @@ public class DispatcherController : MonoBehaviour {
     return this.dispatcher.On(evnt, callback);
   }
 
+  public int On(string evnt, Callback callback, Hashtable payload) {
+    Debug.Log(evnt);
+    return this.dispatcher.On(evnt, callback, payload);
+  }
+
   public void Off(int reference) {
     this.dispatcher.Off(reference);
   }
 
-  public void Bind(string from, string to) {
-    this.dispatcher.Bind(from, to);
-  }
+  // public void Bind(string from, string to) {
+  //   this.dispatcher.Bind(from, to);
+  // }
 
-  public void Unbind(string binding) {
-    this.dispatcher.Unbind(binding);
-  }
+  // public void Unbind(string binding) {
+  //   this.dispatcher.Unbind(binding);
+  // }
 
   private void SendUp(Hashtable payload) {
-    DispatcherController up = this.transform.Up().GetComponent<DispatcherController>();;
-    if(up) up.Trigger(payload);
+    Transform upTransform = this.transform.Up();
+    if(!upTransform) return;
+    DispatcherController upDispatchController = upTransform.GetComponent<DispatcherController>();
+    if(!upDispatchController) return;
+    upDispatchController.Trigger(payload);
+  }
+
+  public void Update() {
+    // this.Trigger("update");
   }
 
   public void Start() {
-    this.On("every", this.SendUp);
+    this.On("all", this.SendUp);
   }
 }
