@@ -46,7 +46,6 @@ public static class DispatcherExtensions {
     return that.GetDispatcher().On(evnt, callback);
   }
   public static int On(this GameObject that,  string evnt, Callback callback, Hashtable payload) {
-    Debug.Log(evnt);
     return that.GetDispatcher().On(evnt, callback, payload);
   }
 
