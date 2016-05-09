@@ -30,7 +30,6 @@ public class DispatcherController : MonoBehaviour {
   }
 
   public int On(string evnt, Callback callback, Hashtable payload) {
-    Debug.Log(evnt);
     return this.dispatcher.On(evnt, callback, payload);
   }
 
