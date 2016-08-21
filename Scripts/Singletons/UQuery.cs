@@ -74,9 +74,7 @@ public class Selection
     foreach (GameObject gameObject in this.selection)
     {
       if (gameObject.transform.parent)
-      {
         result.Add(gameObject.transform.parent);
-      }
     }
     return result;
   }
@@ -249,7 +247,6 @@ public class Selection
         Selection element = new Selection(gameObject);
         queryResult.Add(element.Query(queryArray));
       }
-
     }
     else if (this.Count() == 1)
     {
