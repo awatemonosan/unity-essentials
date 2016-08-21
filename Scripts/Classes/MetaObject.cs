@@ -12,6 +12,6 @@ public class MetaObject : Dispatcher {
 
   ~MetaObject() {
     Broadcaster.Off(_callbackID);
-    this.Trigger("destroy");
+    this.Trigger("release");
   }
 }

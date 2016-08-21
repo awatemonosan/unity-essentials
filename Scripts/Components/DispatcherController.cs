@@ -5,14 +5,14 @@ using System.Collections.Generic;
 public class DispatcherController : MonoBehaviour {
   private Dispatcher dispatcher = new Dispatcher();
 
-  public void Trigger(string evnt) {
-    this.Trigger(evnt, new Hashtable( ));
-  }
-
   public void AnimKeyframe(string evnt) {
     Hashtable payload = new Hashtable( );
     payload["keyframe"] = evnt;
     this.Trigger("keyframe", payload);
+  }
+
+  public void Trigger(string evnt) {
+    this.Trigger(evnt, new Hashtable( ));
   }
   public void Trigger(string evnt, Hashtable payload) {
     payload["event"] = evnt;
@@ -33,6 +33,9 @@ public class DispatcherController : MonoBehaviour {
     return this.dispatcher.On(evnt, callback, payload);
   }
 
+  // TODO: Add:
+  // public void Off(string evnt, Callback callback) {} // remove by event and callback
+  // public void Off(string evnt) {} // remove all callbacks
   public void Off(int reference) {
     this.dispatcher.Off(reference);
   }

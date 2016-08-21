@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
-using System.Collections;
+
 using System;
+using System.Collections;
  
-public class Math3d {
+public class Math3d : Singleton<InputManager> {
  
   private static Transform tempChild = null;
   private static Transform tempParent = null;
@@ -16,7 +17,7 @@ public class Math3d {
   private static int rotationSamplesTaken = 0;
  
   public static void Init(){
- 
+    // TODO: refactor this out and use singleton pattern everywhere in here (Math3d.cs)
     tempChild = (new GameObject("Math3d_TempChild")).transform;
     tempParent = (new GameObject("Math3d_TempParent")).transform;
  
