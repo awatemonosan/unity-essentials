@@ -142,11 +142,16 @@ public class Selection
     }
     return this;
   }
+
   public Selection RemoveClass (string className)
   {
     foreach (GameObject gameObject in selection)
     {
-      UQueryClassName classNameComponent = gameObject.AddComponent<UQueryClassName>();
+      foreach (UQueryClassName classNameComponent in gameObject.GetComponents(typeof(UQueryClassName)))
+      {
+        if (classNameComponent.className == className)
+          GameObject.Destroy(classNameComponent);
+      }
     }
     return this;
   }
@@ -286,39 +291,39 @@ public class Selection
         if (index > begining)
         {
           string subQuery = query.Substring(begining, index);
-          if (query[0] == '@') // TAG
+          if (subQuery[0] == '@') // TAG
           {
-            string tag = query.Substring(1, query.Length-1);
+            string tag = subQuery.Substring(1, subQuery.Length-1);
             if (gameObject.tag != tag)
               return false;
           }
-          else if (query[0] == '#') // ID
+          else if (subQuery[0] == '#') // ID
           {
-            string id = query.Substring(1, query.Length-1);
+            string id = subQuery.Substring(1, subQuery.Length-1);
             if(!gameObject.GetComponent<UQueryID>())
               return false;
             if(gameObject.GetComponent<UQueryID>().id != id)
               return false;
           }
-          else if (query[0] == '.') // CLASS
+          else if (subQuery[0] == '.') // CLASS
           {
-            string className = query.Substring(1, query.Length-1);
+            string className = subQuery.Substring(1, subQuery.Length-1);
             if (!gameObject.GetComponent<UQueryClassName>())
               return false;
             if (gameObject.GetComponent<UQueryClassName>().className != className)
               return false;
           }
-          else if (query[0] == '$') // STATE
+          else if (subQuery[0] == '$') // STATE
           {
-            string state = query.Substring(1, query.Length-1);
+            string state = subQuery.Substring(1, subQuery.Length-1);
             if (!gameObject.GetComponent<UQueryClassName>())
               return false;
             if (gameObject.GetComponent<UQueryState>().state != state)
               return false;
           }
-          else if (query[0] == '&') // COMPONENT
+          else if (subQuery[0] == '&') // COMPONENT
           {
-            string component = query.Substring(1, query.Length-1);
+            string component = subQuery.Substring(1, subQuery.Length-1);
             if (!gameObject.GetComponent(component))
               return false;
           }
