@@ -93,6 +93,12 @@ public class Dispatcher {
     payload["event"] = eventName;
     this.Trigger(payload);
   }
+  public void Trigger(string eventName, object obj) {
+    Hashtable payload = new Hashtable();
+    payload["event"] = eventName;
+    payload["value"] = obj;
+    this.Trigger(payload);
+  }
   public void Trigger(Hashtable payload) {
     if(!payload.ContainsKey("eventID")) {
       payload["eventID"] = eventID;

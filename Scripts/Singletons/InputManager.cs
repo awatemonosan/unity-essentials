@@ -84,7 +84,7 @@ public class CatagoryInput : InputWrapper {
   private string _catagory;
   public string catagory{get{return catagory;}}
 
-  public CatagoryInput(string catagory, string inputName, bool isBinary) : base(inputName, isBinary) {
+  public CatagoryInput(string catagory, string inputName, bool isBinary) : base(catagory+"."+inputName, isBinary) {
     this._catagory = catagory;
   }
 }
@@ -157,7 +157,7 @@ class MouseButtonInput : KeyCodeInput {
   private int _button;
   public int button {get {return _button;}}
 
-  public MouseButtonInput(int button, KeyCode keyCode) : base("mouse", "mouse"+button, keyCode) {
+  public MouseButtonInput(int button, KeyCode keyCode) : base("mouse", "button."+button, keyCode) {
     this._button = button;
   }
 }
@@ -175,7 +175,7 @@ class JoystickButtonInput : KeyCodeInput {
   private int _button;
   public int button{get {return button;}}
 
-  public JoystickButtonInput(int joystick, int button, KeyCode keyCode) : base("joystick", "joystick" +joystick+ "button" +button, keyCode){
+  public JoystickButtonInput(int joystick, int button, KeyCode keyCode) : base("joystick", joystick+ ".button." +button, keyCode){
     this._joystick = joystick;
   }
 }
@@ -205,25 +205,25 @@ class JoystickAxisInput : AxisInput {
   private int _axis;
   public int axis{get{return _axis;}}
 
-  public JoystickAxisInput(int joystick, int axis) : base("joystick", "joystick" +joystick+ "axis" +axis, axis+ "-" +joystick) {
+  public JoystickAxisInput(int joystick, int axis) : base("joystick", joystick+ ".axis." +axis, axis+ "-" +joystick) {
     this._joystick = joystick;
     this._axis = axis;
   }
 
 }
 
-class MouseInput : CatagoryInput {
-  private int _axis;
-  public int axis{get{return _axis;}}
+// class MouseInput : CatagoryInput {
+//   private int _axis;
+//   public int axis{get{return _axis;}}
 
-  public MouseInput(string catagory, string inputName, int axis) : base(catagory, inputName, false) {
-    this._axis = axis==0 ? 0 : 1;
-  }
+//   public MouseInput(string catagory, string inputName, int axis) : base(catagory, inputName, false) {
+//     this._axis = axis==0 ? 0 : 1;
+//   }
 
-  public override void Update() {
-    this.Set(Input.mousePosition[axis == 0 ? 0 : 2]);
-  }
-}
+//   public override void Update() {
+//     this.Set(Input.mousePosition[axis == 0 ? 0 : 2]);
+//   }
+// }
 
 public class InputManager : Singleton<InputManager> {
 ///////////////////////////////////////////////////////////////////////////////
@@ -596,7 +596,7 @@ public class InputManager : Singleton<InputManager> {
 
   private void InitMouse() {
     // TODO: Iterate over an array
-    InputManager.AddInput( new MouseButtonInput(0, KeyCode.Mouse0) );
+    InputManager.AddInput(new MouseButtonInput(0, KeyCode.Mouse0));
     InputManager.AddInput(new MouseButtonInput(1, KeyCode.Mouse1));
     InputManager.AddInput(new MouseButtonInput(2, KeyCode.Mouse2));
     InputManager.AddInput(new MouseButtonInput(3, KeyCode.Mouse3));

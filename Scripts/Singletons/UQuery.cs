@@ -15,6 +15,10 @@ public class Selection
   {
      this.selection.Add(transform.gameObject);
   }
+  public Selection (Component component)
+  {
+     this.selection.Add(component.gameObject);
+  }
   public Selection (GameObject gameObject)
   {
      this.selection = new List<GameObject>();
@@ -26,12 +30,17 @@ public class Selection
   }
   public Selection (Selection selection)
   {
-     this.selection = selection.GetAll();
+     this.selection = selection.List();
   }
 
   public Selection Add (Transform transform)
   {
     this.selection.Add(transform.gameObject);
+    return this;
+  }
+  public Selection Add (Component component)
+  {
+    this.selection.Add(component.gameObject);
     return this;
   }
   public Selection Add( GameObject gameObject)
@@ -41,13 +50,11 @@ public class Selection
   }
   public Selection Add( GameObject[] gameObjects)
   {
-    this.Add(new List<GameObject>(gameObjects));
-    return this;
+    return this.Add(new List<GameObject>(gameObjects));
   }
   public Selection Add (Selection selection)
   {
-    this.Add(selection.GetAll());
-    return this;
+    return this.Add(selection.List());
   }
   public Selection Add (List<GameObject> gameObjects)
   {
@@ -122,21 +129,11 @@ public class Selection
     return children;
   }
 
-  public Selection AddComponent<T>() where T : Component
-  {
-    foreach (GameObject gameObject in selection)
-    {
-      gameObject.AddComponent<T>();
-    }
-    return this;
-  }
-
   public Selection AddClass (string className)
   {
     foreach (GameObject gameObject in selection)
     {
-      UQueryClassName classNameComponent = gameObject.AddComponent<UQueryClassName>();
-      classNameComponent.className = className;
+      gameObject.AddClass(className);
     }
     return this;
   }
@@ -145,31 +142,34 @@ public class Selection
   {
     foreach (GameObject gameObject in selection)
     {
-      foreach (UQueryClassName classNameComponent in gameObject.GetComponents(typeof(UQueryClassName)))
-      {
-        if (classNameComponent.className == className)
-          GameObject.Destroy(classNameComponent);
-      }
+      gameObject.RemoveClass(className);
     }
     return this;
   }
 
-  public Selection SetID (string id)
+  public Selection AddID (string id)
   {
     foreach (GameObject gameObject in selection)
     {
-      UQueryID idComponent = gameObject.AddComponent<UQueryID>();
-      idComponent.id = id;
+      gameObject.AddID(id);
     }
     return this;
   }
 
-  public Selection SetState (string state)
+  public Selection RemoveID (string id)
   {
     foreach (GameObject gameObject in selection)
     {
-      UQueryState stateComponent = gameObject.AddComponent<UQueryState>();
-      stateComponent.state = state;
+      gameObject.RemoveID(id);
+    }
+    return this;
+  }
+
+  public Selection SetState (string stateName, string state)
+  {
+    foreach (GameObject gameObject in selection)
+    {
+      gameObject.SetState(stateName, state);
     }
     return this;
   }
@@ -217,7 +217,16 @@ public class Selection
     return this;
   }
 
-  public List<GameObject> GetAll ()
+  public Selection AddComponent<T>() where T : Component
+  {
+    foreach (GameObject gameObject in selection)
+    {
+      gameObject.AddComponent<T>();
+    }
+    return this;
+  }
+
+  public List<GameObject> List ()
   {
     return new List<GameObject>(this.selection);
   }
@@ -229,8 +238,7 @@ public class Selection
 
   public Selection Query (string queryString)
   {
-    string[] stringSeparators = new string[]
-    {" "};
+    string[] stringSeparators = new string[]{" "};
     string[] queryArray = queryString.Split(stringSeparators, StringSplitOptions.RemoveEmptyEntries);
     return this.Query(queryArray);
   }
@@ -288,7 +296,13 @@ public class Selection
         if (index > begining)
         {
           string subQuery = query.Substring(begining, index);
-          if (subQuery[0] == '@') // TAG
+          if (subQuery[0] == ':') // name
+          {
+            string name = subQuery.Substring(1, subQuery.Length-1);
+            if (gameObject.name != name)
+              return false;
+          }
+          else if (subQuery[0] == '@') // TAG
           {
             string tag = subQuery.Substring(1, subQuery.Length-1);
             if (gameObject.tag != tag)
@@ -310,7 +324,7 @@ public class Selection
             if (gameObject.GetComponent<UQueryClassName>().className != className)
               return false;
           }
-          else if (subQuery[0] == '$') // STATE
+          else if (subQuery[0] == '?') // STATE
           {
             string state = subQuery.Substring(1, subQuery.Length-1);
             if (!gameObject.GetComponent<UQueryClassName>())
@@ -355,5 +369,13 @@ public class UQuery : Singleton<Broadcaster>
   public static Selection Query (Selection root, string queryString)
   {
     return root.Query(queryString);
+  }
+  public static Selection Query (GameObject gameObject, string queryString)
+  {
+    return gameObject.Query(queryString);
+  }
+  public static Selection Query (Component component, string queryString)
+  {
+    return component.gameObject.Query(queryString);
   }
 }
