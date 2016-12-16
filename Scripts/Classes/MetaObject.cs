@@ -7,7 +7,7 @@ public class MetaObject : Dispatcher {
   private DispatcherListener dispatcherListener;
 
   public MetaObject() {
-    dispatcherListener = Broadcaster.On("all", this.Trigger);
+    dispatcherListener = Broadcaster.GetDispatcher().On("all", this.Trigger);
   }
 
   ~MetaObject() {
