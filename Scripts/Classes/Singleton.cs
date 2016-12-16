@@ -40,30 +40,6 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
     return instance.GetDispatcher();
   }
 
-  static public DispatcherListener On(string evnt, Callback callback, Hashtable payload) {
-    return instance.gameObject.On(evnt, callback, payload);
-  }
-
-  static public DispatcherListener On(string evnt, Callback callback) {
-    return instance.gameObject.On(evnt, callback);
-  }
-
-  static public void Off(int reference) {
-    instance.gameObject.gameObject.Off(reference);
-  }
-
-  static public void Trigger(string evnt){
-    instance.gameObject.Trigger(evnt);
-  }
-
-  static public void Trigger(Hashtable payload){
-    instance.gameObject.Trigger(payload);
-  }
-
-  static public void Trigger(string evnt, Hashtable payload){
-    instance.gameObject.Trigger(evnt, payload);
-  }
-
   public void OnDestroy () {
     isQuitting = true;
   }
