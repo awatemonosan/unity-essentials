@@ -8,11 +8,7 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
   static private object _lock = new object();
   static private bool isQuitting = false;
 
-  static public T I {
-    get { return Instance; }
-  }
-
-  static public T Instance {
+  static public T instance {
     get {
       if (isQuitting) return null;
  
@@ -37,40 +33,36 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
   }
 
   public static void EnsureExists(){
-    T i = I; // To create it you gotta reference it. EZPZ
+    T i = instance; // To create it you gotta reference it. EZPZ
   }
 
-  static public int On(string evnt, Callback callback, Hashtable payload) {
-    return I.gameObject.On(evnt, callback, payload);
+  static public Dispatcher GetDispatcher() {
+    return instance.GetDispatcher();
   }
 
-  static public int On(string evnt, Callback callback) {
-    return I.gameObject.On(evnt, callback);
+  static public DispatcherListener On(string evnt, Callback callback, Hashtable payload) {
+    return instance.gameObject.On(evnt, callback, payload);
+  }
+
+  static public DispatcherListener On(string evnt, Callback callback) {
+    return instance.gameObject.On(evnt, callback);
   }
 
   static public void Off(int reference) {
-    I.gameObject.gameObject.Off(reference);
+    instance.gameObject.gameObject.Off(reference);
   }
 
   static public void Trigger(string evnt){
-    I.gameObject.Trigger(evnt);
+    instance.gameObject.Trigger(evnt);
   }
 
   static public void Trigger(Hashtable payload){
-    I.gameObject.Trigger(payload);
+    instance.gameObject.Trigger(payload);
   }
 
   static public void Trigger(string evnt, Hashtable payload){
-    I.gameObject.Trigger(evnt, payload);
+    instance.gameObject.Trigger(evnt, payload);
   }
-
-  // static public void Bind(string from, string to) {
-  //   I.gameObject.Bind(from, to);
-  // }
-
-  // static public void Unbind(string binding) {
-  //   I.gameObject.Unbind(binding);
-  // }
 
   public void OnDestroy () {
     isQuitting = true;

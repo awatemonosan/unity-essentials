@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class GameObjectExtensionController : MonoBehaviour {
+  private Dispatcher dispatcher = new Dispatcher();
+
   static int nextID = 0;
 
   public Hashtable data = new Hashtable( );
@@ -16,6 +18,30 @@ public class GameObjectExtensionController : MonoBehaviour {
 
   void Start( ) {
     this._ID = nextID++;
+    this.On("all", this.SendUp);
+  }
+
+  public void Update() {
+    // this.Trigger("update");
+  }
+
+  public Dispatcher GetDispatcher()
+  {
+    return this.dispatcher;
+  }
+
+  public void AnimKeyframe(string evnt) {
+    Hashtable payload = new Hashtable( );
+    payload["keyframe"] = evnt;
+    this.Trigger("keyframe", payload);
+  }
+
+  private void SendUp(Hashtable payload) {
+    Transform upTransform = this.transform.Up();
+    if(!upTransform) return;
+    DispatcherController upDispatchController = upTransform.GetComponent<DispatcherController>();
+    if(!upDispatchController) return;
+    upDispatchController.Trigger(payload);
   }
 
   public string GetState(string stateName)

@@ -2,6 +2,8 @@
 using System.Collections;
 
 public static class DispatcherExtensions {
+  public static int count = 0;
+  
   public static DispatcherController GetDispatcher(this GameObject that) {
     DispatcherController dispatcher = that.GetComponent<DispatcherController>();
 
@@ -13,11 +15,13 @@ public static class DispatcherExtensions {
   public static DispatcherController GetDispatcher(this Transform that) {
     return that.gameObject.GetDispatcher();
   }
+  public static DispatcherController GetDispatcher(this Component that) {
+    return that.gameObject.GetDispatcher();
+  }
   public static DispatcherController GetDispatcher(this MonoBehaviour that) {
     return that.gameObject.GetDispatcher();
   }
 
-  public static int count = 0;
 
   public static void Trigger(this GameObject that, string evnt) {
     that.GetDispatcher().Trigger(evnt);
@@ -28,10 +32,10 @@ public static class DispatcherExtensions {
   public static void Trigger(this GameObject that, string evnt, Hashtable payload) {
     that.GetDispatcher().Trigger(evnt, payload);
   }
-  public static int On(this GameObject that,  string evnt, Callback callback) {
+  public static DispatcherListener On(this GameObject that,  string evnt, Callback callback) {
     return that.GetDispatcher().On(evnt, callback);
   }
-  public static int On(this GameObject that,  string evnt, Callback callback, Hashtable payload) {
+  public static DispatcherListener On(this GameObject that,  string evnt, Callback callback, Hashtable payload) {
     return that.GetDispatcher().On(evnt, callback, payload);
   }
   public static void Off(this GameObject that, int callbackID) {
@@ -53,10 +57,10 @@ public static class DispatcherExtensions {
   public static void Trigger(this Transform that,  string evnt, Hashtable payload) {
     that.gameObject.Trigger(evnt, payload);
   }
-  public static int On(this Transform that, string evnt, Callback callback) {
+  public static DispatcherListener On(this Transform that, string evnt, Callback callback) {
     return that.gameObject.On(evnt, callback);
   }
-  public static int On(this Transform that, string evnt, Callback callback, Hashtable payload) {
+  public static DispatcherListener On(this Transform that, string evnt, Callback callback, Hashtable payload) {
     return that.gameObject.On(evnt, callback, payload);
   }
   public static void Off(this Transform that, int callbackID) {
@@ -78,13 +82,32 @@ public static class DispatcherExtensions {
   public static void Trigger(this Component that,  string evnt, Hashtable payload) {
     that.gameObject.Trigger(evnt, payload);
   }
-  public static int On(this Component that, string evnt, Callback callback) {
+  public static DispatcherListener On(this Component that, string evnt, Callback callback) {
     return that.gameObject.On(evnt, callback);
   }
-  public static int On(this Component that, string evnt, Callback callback, Hashtable payload) {
+  public static DispatcherListener On(this Component that, string evnt, Callback callback, Hashtable payload) {
     return that.gameObject.On(evnt, callback, payload);
   }
   public static void Off(this Component that, int callbackID) {
+    that.gameObject.Off(callbackID);
+  }
+
+  public static void Trigger(this MonoBehaviour that, string evnt) {
+    that.gameObject.Trigger(evnt);
+  }
+  public static void Trigger(this MonoBehaviour that,  Hashtable payload) {
+    that.gameObject.Trigger(payload);
+  }
+  public static void Trigger(this MonoBehaviour that,  string evnt, Hashtable payload) {
+    that.gameObject.Trigger(evnt, payload);
+  }
+  public static DispatcherListener On(this MonoBehaviour that, string evnt, Callback callback) {
+    return that.gameObject.On(evnt, callback);
+  }
+  public static DispatcherListener On(this MonoBehaviour that, string evnt, Callback callback, Hashtable payload) {
+    return that.gameObject.On(evnt, callback, payload);
+  }
+  public static void Off(this MonoBehaviour that, int callbackID) {
     that.gameObject.Off(callbackID);
   }
 }

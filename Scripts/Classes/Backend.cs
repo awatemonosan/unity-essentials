@@ -13,7 +13,7 @@ public class Backend : Dispatcher {
 
   public Backend(string ipAddress, int port) {
     // endpoint = new IPEndPoint(IPAddress.Parse(ipAddress), port);
-    this.EnableTimedTriggers();
+    // this.EnableTimedTriggers();
 
     endpoint = new IPEndPoint(IPAddress.Parse(ipAddress), port);
     client = new UdpClient();
@@ -34,7 +34,7 @@ public class Backend : Dispatcher {
     payload["source_ip"]   = endpoint.Address.ToString();
     payload["source_port"] = endpoint.Port;
 
-    this.TriggerIn(payload, 0);
+    this.Trigger(payload);
     client.BeginReceive(new AsyncCallback(OnMessageRecieved), null);
   }
 

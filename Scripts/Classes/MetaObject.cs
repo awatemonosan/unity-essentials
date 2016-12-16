@@ -4,14 +4,13 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class MetaObject : Dispatcher {
-  private int _callbackID;
+  private DispatcherListener dispatcherListener;
 
   public MetaObject() {
-    _callbackID = Broadcaster.On("all", this.Trigger);
+    dispatcherListener = Broadcaster.On("all", this.Trigger);
   }
 
   ~MetaObject() {
-    Broadcaster.Off(_callbackID);
-    this.Trigger("release");
+    dispatcherListener.Release();
   }
 }

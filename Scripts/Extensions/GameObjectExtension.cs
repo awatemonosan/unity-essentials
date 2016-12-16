@@ -4,6 +4,11 @@ using System.Collections.Generic;
 
 public static class GameObjectExtension
 {
+  public static Dispatcher GetDispatcher(this GameObject that)
+  {
+    return that.WithComponent<GameObjectExtensionController>().GetDispatcher();
+  }
+
   public static string GetState(this GameObject that, string stateName)
   {
     return that.WithComponent<GameObjectExtensionController>().GetState(stateName);
