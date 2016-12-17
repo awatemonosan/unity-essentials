@@ -3,26 +3,26 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class GameObjectExtensionController : MonoBehaviour {
-  private Dispatcher dispatcher = new Dispatcher();
-
+// Variables
   static int nextID = 0;
 
-  public Hashtable data = new Hashtable( );
-
+  private Dispatcher dispatcher = new Dispatcher();
   private int _ID;
-  public int ID {
-    get {
+  public int ID
+  {
+    get
+    {
       return _ID;
     }
   }
 
-  void Start( ) {
-    this._ID = nextID++;
-    this.On("all", this.SendUp);
-  }
+  public Hashtable data = new Hashtable( );
 
-  public void Update() {
-    // this.Trigger("update");
+// MonoBehavior messages
+
+  void Start( )
+  {
+    this._ID = nextID++;
   }
 
   public Dispatcher GetDispatcher()
@@ -30,19 +30,22 @@ public class GameObjectExtensionController : MonoBehaviour {
     return this.dispatcher;
   }
 
-  public void AnimKeyframe(string evnt) {
+  public void AnimKeyframe(string evnt)
+  {
     Hashtable payload = new Hashtable( );
     payload["keyframe"] = evnt;
-    this.Trigger("keyframe", payload);
+    this.GetDispatcher().Trigger("keyframe", payload);
   }
 
-  private void SendUp(Hashtable payload) {
+  private void SendUp(Hashtable payload)
+  {
     Transform upTransform = this.transform.Up();
     if(!upTransform) return;
-    DispatcherController upDispatchController = upTransform.GetComponent<DispatcherController>();
-    if(!upDispatchController) return;
-    upDispatchController.Trigger(payload);
+    upTransform.gameObject.GetDispatcher().Trigger(payload);
   }
+
+// UQUERY OBJECT STATE MANAGEMENT
+//*experimental feature
 
   public string GetState(string stateName)
   {
@@ -70,8 +73,11 @@ public class GameObjectExtensionController : MonoBehaviour {
     {
       if (stateComponent.name == name) return stateComponent;
     }
+
     return null;
   }
+
+// UQUERY OBJECT CLASS MANAGEMENT
 
   public void AddClass(string className)
   {
@@ -102,6 +108,8 @@ public class GameObjectExtensionController : MonoBehaviour {
     return null;
   }
 
+// UQUERY OBJECT ID MANAGEMENT
+
   public void AddID(string id)
   {
     if (this.HasID(id)) return;
@@ -130,6 +138,8 @@ public class GameObjectExtensionController : MonoBehaviour {
     }
     return null;
   }
+
+// Helpers
   
   public Selection Query(string queryString)
   {
