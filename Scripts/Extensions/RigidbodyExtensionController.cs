@@ -18,8 +18,8 @@ public class RigidbodyExtensionController : MonoBehaviour {
   public Vector3 groundNormal = Physics.gravity;
   private Hashtable impacts = new Hashtable();
   void Start(){
-    gameObject.On("late_update", this.ResetEverything);
-    gameObject.On("collision_stay", this.HandleCollision);
+    gameObject.GetDispatcher().On("late_update", this.ResetEverything);
+    gameObject.GetDispatcher().On("collision_stay", this.HandleCollision);
   }
 
   public bool IsOnGround(){
@@ -30,7 +30,7 @@ public class RigidbodyExtensionController : MonoBehaviour {
     return impacts.ContainsKey(other);
   }
 
-  private void HandleCollision(Hashtable payload){
+  private bool HandleCollision(Hashtable payload){
     Collision collision = (Collision)payload.GetAs<Collision>("collision");
     foreach( ContactPoint contact in collision.contacts ){
       //Register impact
@@ -54,11 +54,13 @@ public class RigidbodyExtensionController : MonoBehaviour {
       if(newDot > oldDot)
         groundNormal = contact.normal;
     }
+    return true;
   }
 
-  public void ResetEverything(Hashtable _){
+  public bool ResetEverything(Hashtable _){
     impacts = new Hashtable();
     groundNormal = Physics.gravity * -1;
+    return true;
   }
 
 }
