@@ -178,16 +178,7 @@ public class Selection
   {
     foreach (GameObject gameObject in selection)
     {
-      gameObject.On(evnt, callback);
-    }
-    return this;
-  }
-
-  public Selection Off (int reference)
-  {
-    foreach (GameObject gameObject in selection)
-    {
-      gameObject.Off(reference);
+      gameObject.GetDispatcher().On(evnt, callback);
     }
     return this;
   }
@@ -196,7 +187,7 @@ public class Selection
   {
     foreach (GameObject gameObject in selection)
     {
-      gameObject.Trigger(evnt);
+      gameObject.GetDispatcher().Trigger(evnt);
     }
     return this;
   }
@@ -204,7 +195,7 @@ public class Selection
   {
     foreach (GameObject gameObject in selection)
     {
-      gameObject.Trigger(evnt, payload);
+      gameObject.GetDispatcher().Trigger(evnt, payload);
     }
     return this;
   }
@@ -212,7 +203,7 @@ public class Selection
   {
     foreach (GameObject gameObject in selection)
     {
-      gameObject.Trigger(payload);
+      gameObject.GetDispatcher().Trigger(payload);
     }
     return this;
   }
