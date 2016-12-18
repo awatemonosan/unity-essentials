@@ -4,7 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
  
-public class Web {
+public class Web : Singleton<Web> {
   public static IEnumerator WaitForWWW(WWW www)
   {
     yield return www;
@@ -22,12 +22,10 @@ public class Web {
     byte[] utfBytes = System.Text.Encoding.UTF8.GetBytes(json);
     WWW www = new WWW(url, utfBytes, headers);
 
-    DispatcherController temp = new GameObject().GetDispatcher(); // LOL
-    temp.StartCoroutine(WaitForWWW(www));
+    instance.StartCoroutine(WaitForWWW(www));
     //do nothing untill json is loaded
     while (!www.isDone) { /*Do Nothing*/ }
     
-    GameObject.Destroy(temp.gameObject); // LOOOOOL
     return www;
   }
   public static string Post(string url, Hashtable payload){
