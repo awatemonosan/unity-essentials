@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class InputWrapper {
-  // public float threshold = 0.115f; // Feels good
+  // public float threshold = 0.115f; // Arbitrary, but feels good
 
   private float current = 0;
   private float previous = 0;
@@ -45,18 +45,18 @@ public class InputWrapper {
         // InputManager.Trigger(this.inputName + ".changed", payload);
 
         if(stateBinary == 0) {
-          InputManager.Trigger(this.inputName + ".released", payload);
+          InputManager.GetDispatcher().Trigger(this.inputName + ".released", payload);
         } else {
-          InputManager.Trigger(this.inputName + ".pressed", payload);
+          InputManager.GetDispatcher().Trigger(this.inputName + ".pressed", payload);
         }
       } else {
         if(stateBinary == 1) {
-          InputManager.Trigger(this.inputName + ".held", payload);
+          InputManager.GetDispatcher().Trigger(this.inputName + ".held", payload);
         }
       }
     } else {
       if(this.Delta() != 0) {
-        InputManager.Trigger(inputName + ".changed", payload);
+        InputManager.GetDispatcher().Trigger(inputName + ".changed", payload);
       }
     }
   }
