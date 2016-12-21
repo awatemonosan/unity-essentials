@@ -17,8 +17,8 @@ public class InputWrapper
     get
     {
       return this._inputName;
-      }
     }
+  }
 
   private bool _isBinary = false;
   public bool isBinary
@@ -26,10 +26,10 @@ public class InputWrapper
     get
     {
       return this._isBinary;
-      }
     }
+  }
   public InputWrapper(string inputName, bool isBinary)
-   {
+  {
     this._isBinary = isBinary;
     this._inputName = inputName;
   }
@@ -63,26 +63,26 @@ public class InputWrapper
         // InputManager.Trigger(this.inputName + ".changed", payload);
 
         if(stateBinary == 0)
-         {
+        {
           InputManager.GetDispatcher().Trigger(this.inputName + ".released", payload);
         } 
         else
-         {
+        {
           InputManager.GetDispatcher().Trigger(this.inputName + ".pressed", payload);
         }
       }
        else
-       {
+      {
         if(stateBinary == 1)
-         {
+        {
           InputManager.GetDispatcher().Trigger(this.inputName + ".held", payload);
         }
       }
     } 
     else
-     {
+    {
       if(this.Delta() != 0)
-       {
+      {
         InputManager.GetDispatcher().Trigger(inputName + ".changed", payload);
       }
     }
@@ -94,13 +94,13 @@ public class InputWrapper
    }
 
   public void Set(float value)
-   {
+  {
     this.previous = this.current;
     this.current = value;
   }
 
   public virtual float State()
-   {
+  {
 
     return this.current;
   }
@@ -121,8 +121,8 @@ public class CatagoryInput : InputWrapper
     get
     {
       return catagory;
-      }
     }
+  }
 
   public CatagoryInput(string catagory, string inputName, bool isBinary) : base(catagory+"."+inputName, isBinary) 
   {
@@ -142,21 +142,22 @@ public class BindInputEntry
   }
 }
 public class BindInput : CatagoryInput
- {
+{
   private Dictionary<string, float> bindings = new Dictionary<string, float>();
 
   public BindInput(string catagory, string inputName, bool isBinary) : base(catagory, inputName, isBinary)
-   {
+  {
+
   }
 
   public void Bind(string eventName)
-   {
+  {
 
     this.Bind(eventName, 1f);
   }
 
   public void Bind(string eventName, float factor)
-   {
+  {
 
     this.bindings[eventName] = factor;
   }
@@ -174,7 +175,7 @@ public class BindInput : CatagoryInput
   }
 
   public override float State()
-   {
+  {
     float best = 0;
 
     foreach(KeyValuePair<string, float> binding in bindings) 
@@ -193,7 +194,7 @@ public class BindInput : CatagoryInput
 }
 
 class KeyCodeInput : CatagoryInput
- {
+{
 
   private KeyCode _keyCode;
   public KeyCode keyCode 
@@ -201,30 +202,30 @@ class KeyCodeInput : CatagoryInput
     get 
     {
       return _keyCode;
-      }
     }
+  }
 
   public KeyCodeInput(string catagory, string inputName, KeyCode keyCode) : base(catagory, inputName, true)
-   {
+  {
     this._keyCode = keyCode;
   }
 
   public override void Update()
-   {
+  {
     this.Set( Input.GetKey(this.keyCode) ? 1.0f : 0.0f );
   }
 }
 
 class MouseButtonInput : KeyCodeInput
- {
+{
   private int _button;
   public int button 
   {
     get 
     {
       return _button;
-      }
     }
+  }
 
   public MouseButtonInput(int button, KeyCode keyCode) : base("mouse", "button."+button, keyCode) 
   {
@@ -235,7 +236,7 @@ class MouseButtonInput : KeyCodeInput
 class KeyboardInput : KeyCodeInput
 {
   public KeyboardInput(string inputName, KeyCode keyCode) : base("keyboard", inputName, keyCode)
-   {
+  {
 
   }
 }
@@ -257,8 +258,8 @@ class JoystickButtonInput : KeyCodeInput
     get
     {
       return button;
-      }
     }
+  }
 
   public JoystickButtonInput(int joystick, int button, KeyCode keyCode) : base("joystick", joystick+ ".button." +button, keyCode)
   {
@@ -283,22 +284,22 @@ class AxisInput : CatagoryInput
   }
 
   public override void Update()
-   {
+  {
     this.Set(Input.GetAxis(this.axisName));
   }
 
 }
 
 class JoystickAxisInput : AxisInput
- {
+{
   private int _joystick;
   public int joystick
   {
     get
     {
       return _joystick;
-      }
     }
+  }
 
   private int _axis;
   public int axis
@@ -306,12 +307,12 @@ class JoystickAxisInput : AxisInput
     get
     {
       return _axis;
-      }
     }
+  }
 
   public JoystickAxisInput(int joystick, int axis) : base("joystick", joystick+ ".axis." +axis, axis+ "-" +joystick)
 
-   {
+  {
     this._joystick = joystick;
     this._axis = axis;
   }
@@ -353,7 +354,7 @@ public class InputManager : Singleton<InputManager>
   }
 
   static public BindInput CreateBind(string bindName, string catagory, bool isBinary)
-   {
+  {
 
     return (BindInput)AddInput(new BindInput(bindName, catagory, isBinary));
   }
@@ -361,14 +362,14 @@ public class InputManager : Singleton<InputManager>
 ///////////////////////////////////////////////////////////////////////////////
 // Unity Events
   void Start()
-   {
+  {
     InitKeyboard();
     InitJoystick();
     InitMouse();
   }
 
   void Update()
-   {
+  {
     UpdateInputs();
   }
 
@@ -556,7 +557,7 @@ public class InputManager : Singleton<InputManager>
   }
 
   private void InitKeyboard()
-   {
+  {
     // KeyCode.None,
     InputManager.AddInput(new KeyboardInput("backspace", KeyCode.Backspace));
     InputManager.AddInput(new KeyboardInput("delete", KeyCode.Delete));
@@ -725,7 +726,7 @@ public class InputManager : Singleton<InputManager>
   private void UpdateInputs() 
   {
     inputs.ForEach(delegate(InputWrapper input)
-     {
+    {
       input.Step();
     }
     );

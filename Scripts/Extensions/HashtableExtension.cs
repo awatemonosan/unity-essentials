@@ -73,11 +73,11 @@ public static class HashtableExtension
   public static T GetAs<T>(this Hashtable that, object key) 
   {
     if (that.Contains(key))
-     {
+    {
       return (T)that[key];
     }
      else
-     {
+    {
       return default(T);
     }
   }
@@ -94,7 +94,7 @@ public static class HashtableExtension
     return that.GetAs<float>(key);
      }
   public static bool GetBool(this Hashtable that, object key)
-   { 
+  { 
     return that.GetAs<bool>(key);
      }
   public static Hashtable GetChild(this Hashtable that, object key) 
@@ -109,7 +109,7 @@ public static class HashtableExtension
   }
 
   public static void SetString(this Hashtable that, object key, string value)
-   {
+  {
     that.Set(key,value);
   }
   public static void SetInt(this Hashtable that, object key, int value) 
@@ -117,7 +117,7 @@ public static class HashtableExtension
     that.Set(key,value);
   }
   public static void SetFloat(this Hashtable that, object key, float value)
-   {
+  {
     that.Set(key,value);
   }
   public static void SetBool(this Hashtable that, object key, bool value) 
@@ -125,7 +125,7 @@ public static class HashtableExtension
     that.Set(key,value);
   }
   public static void SetChild(this Hashtable that, object key, Hashtable value)
-   {
+  {
     that.Set(key,value);
   }
   public static void NewChild(this Hashtable that, object key)

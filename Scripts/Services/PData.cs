@@ -6,7 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class PData
- {
+{
   private static string CompletePath(string path)
   {
     return Application.persistentDataPath + "/" + path;

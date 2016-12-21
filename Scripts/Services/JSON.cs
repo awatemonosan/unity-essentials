@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class JSON
- {
+{
   public static string Serialize(Hashtable data)
   {
     return easy.JSON.JsonEncode(data);

@@ -82,14 +82,14 @@ public static class GameObjectExtension
     Collider otherCollider = other.GetComponent<Collider>();
 
     if(thatCollider != null && otherCollider != null)
-     {
+    {
       Physics.IgnoreCollision(thatCollider, otherCollider, ignore);
     }
 
     foreach(Transform thatChild in that.transform)
-     {
+    {
       foreach(Transform otherChild in other.transform)
-       {
+      {
         that.IgnoreCollision(otherChild.gameObject, ignore);
         other.IgnoreCollision(thatChild.gameObject, ignore);
         thatChild.gameObject.IgnoreCollision(otherChild.gameObject, ignore);
@@ -101,12 +101,12 @@ public static class GameObjectExtension
 /// Data helpers
 /*===========================================================================*/
   public static Hashtable Data(this GameObject that)
-   {
+  {
     return that.WithComponent<GameObjectExtensionController>().data;
   }
 
   public static Selection Query(this GameObject that, string queryString)
-   { 
+  { 
     return that.Query(queryString);
      }
   public static Selection Query(this GameObject that, string[] queryArray) 

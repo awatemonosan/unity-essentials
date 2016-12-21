@@ -16,7 +16,7 @@ public static class Vector3Extension
   }
 
   public static Vector3 Clone(this Vector3 that)
-   {
+  {
     return new Vector3(that.x,that.y,that.z);
   }
 

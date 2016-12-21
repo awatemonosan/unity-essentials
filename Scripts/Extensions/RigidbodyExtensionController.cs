@@ -15,7 +15,7 @@ class Impact
 }
 
 public class RigidbodyExtensionController : MonoBehaviour
- {
+{
   public float maxSlope = 45;
   public Vector3 groundNormal = Physics.gravity;
   private Hashtable impacts = new Hashtable();

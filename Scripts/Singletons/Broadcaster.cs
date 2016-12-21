@@ -7,7 +7,7 @@ using System.Collections.Generic;
 public class Broadcaster : Singleton<Broadcaster> 
 {
   // void Awake()
-   {
+  {
     Initialize();
   }
   void Start() {
@@ -35,15 +35,15 @@ public class Broadcaster : Singleton<Broadcaster>
     this.GetDispatcher().Trigger("client.disconnect");
   }
   void OnFailedToConnect()
-   {
+  {
     this.GetDispatcher().Trigger("client.connect.fail");
   }
   void OnFailedToConnectToMasterServer()
-   {
+  {
     this.GetDispatcher().Trigger("tracker.connect.fail");
   }
   void OnServerInitialized()
-   {
+  {
     this.GetDispatcher().Trigger("server.start");
   }
   void OnPlayerConnected() 
@@ -51,12 +51,12 @@ public class Broadcaster : Singleton<Broadcaster>
     this.GetDispatcher().Trigger("server.player.connect");
   }
   void OnPlayerDisconnected()
-   {
+  {
     this.GetDispatcher().Trigger("server.player.disconnect");
   }
 
   void OnPreCull()
-   {
+  {
     this.GetDispatcher().Trigger("render.pre_cull");
   }
   void OnPreRender() 
@@ -72,7 +72,7 @@ public class Broadcaster : Singleton<Broadcaster>
     this.GetDispatcher().Trigger("render.late");
   }
   void OnRenderImage(RenderTexture src, RenderTexture dest)
-   {
+  {
     this.GetDispatcher().Trigger("render.done");
   }
 
@@ -81,7 +81,7 @@ public class Broadcaster : Singleton<Broadcaster>
     Event e = Event.current;
     this.GetDispatcher().Trigger("gui");
     do
-     {
+    {
       this.GetDispatcher().Trigger("gui_"+e.type);
     } 
     while(Event.PopEvent(e));

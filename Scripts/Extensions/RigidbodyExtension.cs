@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public static class RigidbodyExtension
 { 
   public static RigidbodyExtensionController Ext(this Rigidbody that)
-   {
+  {
     RigidbodyExtensionController ext = that.GetComponent<RigidbodyExtensionController>();
 
     if(ext == null)
