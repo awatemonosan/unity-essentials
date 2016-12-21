@@ -7,7 +7,7 @@ public class API
   private string url;
 
   public API(string url)
-   {
+  {
     this.url = url;
   }
 

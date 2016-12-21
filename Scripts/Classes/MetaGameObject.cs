@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class MetaGameObject : MetaObject
- {
+{
   private static List<MetaGameObject> metaGameObjects = new List<MetaGameObject>();
   private static int next_id = 0;
 

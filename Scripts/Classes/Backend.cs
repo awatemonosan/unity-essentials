@@ -1,6 +1,5 @@
 using UnityEngine;
- 
-using System;
+ using System;
 using System.Collections;
 using System.Text;
 using System.Net;
@@ -43,7 +42,7 @@ public class Backend : Dispatcher
   }
 
   public void Send(string evnt)
-   {
+  {
     this.Send(evnt, new Hashtable( ));
   }
   public void Send(string evnt, Hashtable payload) 
@@ -52,7 +51,7 @@ public class Backend : Dispatcher
     this.Send(payload);
   }
   public void Send(Hashtable payload)
-   {
+  {
     this.SendRaw(payload);
   }
 
@@ -62,7 +61,7 @@ public class Backend : Dispatcher
     SendRaw(message);
   }
   public void SendRaw(string message)
-   {
+  {
     byte[] data = Encoding.UTF8.GetBytes(message);
     SendRaw(data);
   }
