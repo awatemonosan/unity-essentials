@@ -2,23 +2,29 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public static class HashtableExtension {
-  public static string Serialize(this Hashtable that){
+public static class HashtableExtension 
+{
+  public static string Serialize(this Hashtable that)
+  {
     return JSON.Serialize(that);
   }
 
-  public static bool HasCycle(this Hashtable that){
+  public static bool HasCycle(this Hashtable that)
+  {
     return that.HasCycle(new List<Hashtable>());
   }
 
-  public static bool HasCycle(this Hashtable that, List<Hashtable> seen){
+  public static bool HasCycle(this Hashtable that, List<Hashtable> seen)
+  {
     if( seen.Contains(that) )
       return true;
 
     seen.Add(that);
 
-    foreach( DictionaryEntry entry in that ){
-      if( entry.Value.GetType() == typeof(Hashtable)){
+    foreach( DictionaryEntry entry in that )
+    {
+      if( entry.Value.GetType() == typeof(Hashtable))
+      {
         if( ((Hashtable) entry.Value).HasCycle(seen) )
           return true;
       }
@@ -54,60 +60,91 @@ public static class HashtableExtension {
     return that;
   }
 
-  public static Hashtable Copy(this Hashtable that){
+  public static Hashtable Copy(this Hashtable that)
+  {
     return (new Hashtable()).Merge(that);
   }
   
 //Getters
-  public static object Get(this Hashtable that, object key) {
+  public static object Get(this Hashtable that, object key) 
+  {
     return that[key];
   }
-  public static T GetAs<T>(this Hashtable that, object key) {
-    if (that.Contains(key)) {
+  public static T GetAs<T>(this Hashtable that, object key) 
+  {
+    if (that.Contains(key))
+     {
       return (T)that[key];
-    } else {
+    }
+     else
+     {
       return default(T);
     }
   }
-  public static string GetString(this Hashtable that, object key) { return that.GetAs<string>(key); }
-  public static int GetInt(this Hashtable that, object key) { return that.GetAs<int>(key); }
-  public static float GetFloat(this Hashtable that, object key) { return that.GetAs<float>(key); }
-  public static bool GetBool(this Hashtable that, object key) { return that.GetAs<bool>(key); }
-  public static Hashtable GetChild(this Hashtable that, object key) { return that.GetAs<Hashtable>(key); }
+  public static string GetString(this Hashtable that, object key)
+   { 
+    return that.GetAs<string>(key);
+     }
+  public static int GetInt(this Hashtable that, object key)
+  { 
+    return that.GetAs<int>(key);
+     }
+  public static float GetFloat(this Hashtable that, object key) 
+  { 
+    return that.GetAs<float>(key);
+     }
+  public static bool GetBool(this Hashtable that, object key)
+   { 
+    return that.GetAs<bool>(key);
+     }
+  public static Hashtable GetChild(this Hashtable that, object key) 
+  { 
+    return that.GetAs<Hashtable>(key); 
+  }
 
 //Setter
-  public static void Set(this Hashtable that, object key, object value){
+  public static void Set(this Hashtable that, object key, object value)
+  {
     that.Add(key,value);
   }
 
-  public static void SetString(this Hashtable that, object key, string value) {
+  public static void SetString(this Hashtable that, object key, string value)
+   {
     that.Set(key,value);
   }
-  public static void SetInt(this Hashtable that, object key, int value) {
+  public static void SetInt(this Hashtable that, object key, int value) 
+  {
     that.Set(key,value);
   }
-  public static void SetFloat(this Hashtable that, object key, float value) {
+  public static void SetFloat(this Hashtable that, object key, float value)
+   {
     that.Set(key,value);
   }
-  public static void SetBool(this Hashtable that, object key, bool value) {
+  public static void SetBool(this Hashtable that, object key, bool value) 
+  {
     that.Set(key,value);
   }
-  public static void SetChild(this Hashtable that, object key, Hashtable value) {
+  public static void SetChild(this Hashtable that, object key, Hashtable value)
+   {
     that.Set(key,value);
   }
-  public static void NewChild(this Hashtable that, object key){
+  public static void NewChild(this Hashtable that, object key)
+  {
     that.Set(key, new Hashtable());
   }
 
-  public static bool HasKey(this Hashtable that, string key){
+  public static bool HasKey(this Hashtable that, string key)
+  {
     return that.Contains(key);
   }
 
-  public static void Load(this Hashtable that, string path){
+  public static void Load(this Hashtable that, string path)
+  {
 
   }
 
-  public static void Save(this Hashtable that, string path){
+  public static void Save(this Hashtable that, string path)
+  {
 
   }
 }

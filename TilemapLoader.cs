@@ -12,7 +12,7 @@ public class TilemapLoader : MonoBehaviour
 	
 	// Update is called once per frame
 	void Update ()
-	 {
+	{
 	
 	}
 }

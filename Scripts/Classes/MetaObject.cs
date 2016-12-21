@@ -3,14 +3,17 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class MetaObject : Dispatcher {
+public class MetaObject : Dispatcher
+ {
   private DispatcherListener dispatcherListener;
 
-  public MetaObject() {
+  public MetaObject()
+   {
     dispatcherListener = Broadcaster.GetDispatcher().On("all", this.Trigger);
   }
 
-  ~MetaObject() {
+  ~MetaObject()
+   {
     dispatcherListener.Release();
   }
 }

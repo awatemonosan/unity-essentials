@@ -4,7 +4,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class InputProfile {
+public class InputProfile
+ {
   public Dispatcher dispatcher = new Dispatcher();
   private DispatcherInterface broadcasterInterface = new DispatcherInterface(Broadcaster.GetDispatcher());
   private Dictionary<string, string> inputBindingMap = new Dictionary<string, string>();

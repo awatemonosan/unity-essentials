@@ -3,7 +3,8 @@
 using System;
 using System.Collections;
  
-public class Math3d : Singleton<InputManager> {
+public class Math3d : Singleton<InputManager> 
+{
  
   private static Transform tempChild = null;
   private static Transform tempParent = null;
@@ -16,7 +17,8 @@ public class Math3d : Singleton<InputManager> {
   private static float[] rotTimeRegister;
   private static int rotationSamplesTaken = 0;
  
-  public static void Init(){
+  public static void Init()
+  {
     // TODO: refactor this out and use singleton pattern everywhere in here (Math3d.cs)
     tempChild = (new GameObject("Math3d_TempChild")).transform;
     tempParent = (new GameObject("Math3d_TempParent")).transform;
@@ -33,7 +35,8 @@ public class Math3d : Singleton<InputManager> {
  
  
   //increase or decrease the length of vector by size
-  public static Vector3 AddVectorLength(Vector3 vector, float size){
+  public static Vector3 AddVectorLength(Vector3 vector, float size)
+  {
  
     //get the vector length
     float magnitude = Vector3.Magnitude(vector);
@@ -49,7 +52,8 @@ public class Math3d : Singleton<InputManager> {
   }
  
   //create a vector of direction "vector" with length "size"
-  public static Vector3 SetVectorLength(Vector3 vector, float size){
+  public static Vector3 SetVectorLength(Vector3 vector, float size)
+  {
  
     //normalize the vector
     Vector3 vectorNormalized = Vector3.Normalize(vector);
@@ -60,28 +64,32 @@ public class Math3d : Singleton<InputManager> {
  
  
   //caclulate the rotational difference from A to B
-  public static Quaternion SubtractRotation(Quaternion B, Quaternion A){
+  public static Quaternion SubtractRotation(Quaternion B, Quaternion A)
+  {
  
     Quaternion C = Quaternion.Inverse(A) * B;   
     return C;
   }
  
   //Add rotation B to rotation A.
-  public static Quaternion AddRotation(Quaternion A, Quaternion B){
+  public static Quaternion AddRotation(Quaternion A, Quaternion B)
+  {
  
     Quaternion C = A * B;   
     return C;
   }
  
   //Same as the build in TransformDirection(), but using a rotation instead of a transform.
-  public static Vector3 TransformDirectionMath(Quaternion rotation, Vector3 vector){
+  public static Vector3 TransformDirectionMath(Quaternion rotation, Vector3 vector)
+  {
  
     Vector3 output = rotation * vector;
     return output;
   }
  
   //Same as the build in InverseTransformDirection(), but using a rotation instead of a transform.
-  public static Vector3 InverseTransformDirectionMath(Quaternion rotation, Vector3 vector){
+  public static Vector3 InverseTransformDirectionMath(Quaternion rotation, Vector3 vector)
+  {
  
     Vector3 output = Quaternion.Inverse(rotation) * vector; 
     return output;
@@ -89,7 +97,8 @@ public class Math3d : Singleton<InputManager> {
  
   //Rotate a vector as if it is attached to an object with rotation "from", which is then rotated to rotation "to".
   //Similar to TransformWithParent(), but rotating a vector instead of a transform.
-  public static Vector3 RotateVectorFromTo(Quaternion from, Quaternion to, Vector3 vector){
+  public static Vector3 RotateVectorFromTo(Quaternion from, Quaternion to, Vector3 vector)
+  {
                                 //Note: comments are in case all inputs are in World Space.
     Quaternion Q = SubtractRotation(to, from);        //Output is in object space.
     Vector3 A = InverseTransformDirectionMath(from, vector);//Output is in object space.
@@ -101,7 +110,8 @@ public class Math3d : Singleton<InputManager> {
   //Find the line of intersection between two planes. The planes are defined by a normal and a point on that plane.
   //The outputs are a point on the line and a vector which indicates it's direction. If the planes are not parallel, 
   //the function outputs true, otherwise false.
-  public static bool PlanePlaneIntersection(out Vector3 linePoint, out Vector3 lineVec, Vector3 plane1Normal, Vector3 plane1Position, Vector3 plane2Normal, Vector3 plane2Position){
+  public static bool PlanePlaneIntersection(out Vector3 linePoint, out Vector3 lineVec, Vector3 plane1Normal, Vector3 plane1Position, Vector3 plane2Normal, Vector3 plane2Position)
+  {
  
     linePoint = Vector3.zero;
     lineVec = Vector3.zero;
@@ -120,7 +130,8 @@ public class Math3d : Singleton<InputManager> {
     float denominator = Vector3.Dot(plane1Normal, ldir);
  
     //Prevent divide by zero and rounding errors by requiring about 5 degrees angle between the planes.
-    if(Mathf.Abs(denominator) > 0.006f){
+    if(Mathf.Abs(denominator) > 0.006f)
+    {
  
       Vector3 plane1ToPlane2 = plane1Position - plane2Position;
       float t = Vector3.Dot(plane1Normal, plane1ToPlane2) / denominator;
@@ -130,14 +141,16 @@ public class Math3d : Singleton<InputManager> {
     }
  
     //output not valid
-    else{
+    else
+    {
       return false;
     }
   } 
  
   //Get the intersection between a line and a plane. 
   //If the line and plane are not parallel, the function outputs true, otherwise false.
-  public static bool LinePlaneIntersection(out Vector3 intersection, Vector3 linePoint, Vector3 lineVec, Vector3 planeNormal, Vector3 planePoint){
+  public static bool LinePlaneIntersection(out Vector3 intersection, Vector3 linePoint, Vector3 lineVec, Vector3 planeNormal, Vector3 planePoint)
+  {
  
     float length;
     float dotNumerator;
@@ -150,7 +163,8 @@ public class Math3d : Singleton<InputManager> {
     dotDenominator = Vector3.Dot(lineVec, planeNormal);
  
     //line and plane are not parallel
-    if(dotDenominator != 0.0f){
+    if(dotDenominator != 0.0f)
+    {
       length =  dotNumerator / dotDenominator;
  
       //create a vector from the linePoint to the intersection point
@@ -163,7 +177,8 @@ public class Math3d : Singleton<InputManager> {
     }
  
     //output not valid
-    else{
+    else
+    {
       return false;
     }
   }
@@ -171,7 +186,8 @@ public class Math3d : Singleton<InputManager> {
   //Calculate the intersection point of two lines. Returns true if lines intersect, otherwise false.
   //Note that in 3d, two lines do not intersect most of the time. So if the two lines are not in the 
   //same plane, use ClosestPointsOnTwoLines() instead.
-  public static bool LineLineIntersection(out Vector3 intersection, Vector3 linePoint1, Vector3 lineVec1, Vector3 linePoint2, Vector3 lineVec2){
+  public static bool LineLineIntersection(out Vector3 intersection, Vector3 linePoint1, Vector3 lineVec1, Vector3 linePoint2, Vector3 lineVec2)
+  {
  
     intersection = Vector3.zero;
  
@@ -182,7 +198,8 @@ public class Math3d : Singleton<InputManager> {
     float planarFactor = Vector3.Dot(lineVec3, crossVec1and2);
  
     //Lines are not coplanar. Take into account rounding errors.
-    if((planarFactor >= 0.00001f) || (planarFactor <= -0.00001f)){
+    if((planarFactor >= 0.00001f) || (planarFactor <= -0.00001f))
+    {
  
       return false;
     }
@@ -190,13 +207,15 @@ public class Math3d : Singleton<InputManager> {
     //Note: sqrMagnitude does x*x+y*y+z*z on the input vector.
     float s = Vector3.Dot(crossVec3and2, crossVec1and2) / crossVec1and2.sqrMagnitude;
  
-    if((s >= 0.0f) && (s <= 1.0f)){
+    if((s >= 0.0f) && (s <= 1.0f))
+    {
  
       intersection = linePoint1 + (lineVec1 * s);
       return true;
     }
  
-    else{
+    else
+    {
       return false;       
     }
   }
@@ -204,7 +223,8 @@ public class Math3d : Singleton<InputManager> {
   //Two non-parallel lines which may or may not touch each other have a point on each line which are closest
   //to each other. This function finds those two points. If the lines are not parallel, the function 
   //outputs true, otherwise false.
-  public static bool ClosestPointsOnTwoLines(out Vector3 closestPointLine1, out Vector3 closestPointLine2, Vector3 linePoint1, Vector3 lineVec1, Vector3 linePoint2, Vector3 lineVec2){
+  public static bool ClosestPointsOnTwoLines(out Vector3 closestPointLine1, out Vector3 closestPointLine2, Vector3 linePoint1, Vector3 lineVec1, Vector3 linePoint2, Vector3 lineVec2)
+  {
  
     closestPointLine1 = Vector3.zero;
     closestPointLine2 = Vector3.zero;
@@ -216,7 +236,8 @@ public class Math3d : Singleton<InputManager> {
     float d = a*e - b*b;
  
     //lines are not parallel
-    if(d != 0.0f){
+    if(d != 0.0f)
+    {
  
       Vector3 r = linePoint1 - linePoint2;
       float c = Vector3.Dot(lineVec1, r);
@@ -231,14 +252,16 @@ public class Math3d : Singleton<InputManager> {
       return true;
     }
  
-    else{
+    else
+    {
       return false;
     }
   } 
  
   //This function returns a point which is a projection from a point to a line.
   //The line is regarded infinite. If the line is finite, use ProjectPointOnLineSegment() instead.
-  public static Vector3 ProjectPointOnLine(Vector3 linePoint, Vector3 lineVec, Vector3 point){    
+  public static Vector3 ProjectPointOnLine(Vector3 linePoint, Vector3 lineVec, Vector3 point)
+  {    
  
     //get vector from point on line to point in space
     Vector3 linePointToPoint = point - linePoint;
@@ -252,7 +275,8 @@ public class Math3d : Singleton<InputManager> {
   //If the projected point lies outside of the line segment, the projected point will 
   //be clamped to the appropriate line edge.
   //If the line is infinite instead of a segment, use ProjectPointOnLine() instead.
-  public static Vector3 ProjectPointOnLineSegment(Vector3 linePoint1, Vector3 linePoint2, Vector3 point){
+  public static Vector3 ProjectPointOnLineSegment(Vector3 linePoint1, Vector3 linePoint2, Vector3 point)
+  {
  
     Vector3 vector = linePoint2 - linePoint1;
  
@@ -261,17 +285,20 @@ public class Math3d : Singleton<InputManager> {
     int side = PointOnWhichSideOfLineSegment(linePoint1, linePoint2, projectedPoint);
  
     //The projected point is on the line segment
-    if(side == 0){
+    if(side == 0)
+    {
  
       return projectedPoint;
     }
  
-    if(side == 1){
+    if(side == 1)
+    {
  
       return linePoint1;
     }
  
-    if(side == 2){
+    if(side == 2)
+    {
  
       return linePoint2;
     }
@@ -281,7 +308,8 @@ public class Math3d : Singleton<InputManager> {
   } 
  
   //This function returns a point which is a projection from a point to a plane.
-  public static Vector3 ProjectPointOnPlane(Vector3 planeNormal, Vector3 planePoint, Vector3 point){
+  public static Vector3 ProjectPointOnPlane(Vector3 planeNormal, Vector3 planePoint, Vector3 point)
+  {
  
     float distance;
     Vector3 translationVector;
@@ -300,14 +328,16 @@ public class Math3d : Singleton<InputManager> {
   } 
  
   //Projects a vector onto a plane. The output is not normalized.
-  public static Vector3 ProjectVectorOnPlane(Vector3 planeNormal, Vector3 vector){
+  public static Vector3 ProjectVectorOnPlane(Vector3 planeNormal, Vector3 vector)
+  {
  
     return vector - (Vector3.Dot(vector, planeNormal) * planeNormal);
   }
  
   //Get the shortest distance between a point and a plane. The output is signed so it holds information
   //as to which side of the plane normal the point is.
-  public static float SignedDistancePlanePoint(Vector3 planeNormal, Vector3 planePoint, Vector3 point){
+  public static float SignedDistancePlanePoint(Vector3 planeNormal, Vector3 planePoint, Vector3 point)
+  {
  
     return Vector3.Dot(planeNormal, (point - planePoint));
   } 
@@ -317,7 +347,8 @@ public class Math3d : Singleton<InputManager> {
   //by calculating a vector perpendicular to one of the vectors and using that as a reference. This is because
   //the result of a dot product only has signed information when an angle is transitioning between more or less
   //than 90 degrees.
-  public static float SignedDotProduct(Vector3 vectorA, Vector3 vectorB, Vector3 normal){
+  public static float SignedDotProduct(Vector3 vectorA, Vector3 vectorB, Vector3 normal)
+  {
  
     Vector3 perpVector;
     float dot;
@@ -348,7 +379,8 @@ public class Math3d : Singleton<InputManager> {
  
   //Calculate the angle between a vector and a plane. The plane is made by a normal vector.
   //Output is in radians.
-  public static float AngleVectorPlane(Vector3 vector, Vector3 normal){
+  public static float AngleVectorPlane(Vector3 vector, Vector3 normal)
+  {
  
     float dot;
     float angle;
@@ -363,7 +395,8 @@ public class Math3d : Singleton<InputManager> {
   }
  
   //Calculate the dot product as an angle
-  public static float DotProductAngle(Vector3 vec1, Vector3 vec2){
+  public static float DotProductAngle(Vector3 vec1, Vector3 vec2)
+  {
  
     double dot;
     double angle;
@@ -372,10 +405,12 @@ public class Math3d : Singleton<InputManager> {
     dot = Vector3.Dot(vec1, vec2);
  
     //Clamp to prevent NaN error. Shouldn't need this in the first place, but there could be a rounding error issue.
-    if(dot < -1.0f){
+    if(dot < -1.0f)
+    {
       dot = -1.0f;
     }             
-    if(dot > 1.0f){
+    if(dot > 1.0f)
+    {
       dot =1.0f;
     }
  
@@ -388,7 +423,8 @@ public class Math3d : Singleton<InputManager> {
  
   //Convert a plane defined by 3 points to a plane defined by a vector and a point. 
   //The plane point is the middle of the triangle defined by the 3 points.
-  public static void PlaneFrom3Points(out Vector3 planeNormal, out Vector3 planePoint, Vector3 pointA, Vector3 pointB, Vector3 pointC){
+  public static void PlaneFrom3Points(out Vector3 planeNormal, out Vector3 planePoint, Vector3 pointA, Vector3 pointB, Vector3 pointC)
+  {
  
     planeNormal = Vector3.zero;
     planePoint = Vector3.zero;
@@ -417,31 +453,36 @@ public class Math3d : Singleton<InputManager> {
   }
  
   //Returns the forward vector of a quaternion
-  public static Vector3 GetForwardVector(Quaternion q){
+  public static Vector3 GetForwardVector(Quaternion q)
+  {
  
     return q * Vector3.forward;
   }
  
   //Returns the up vector of a quaternion
-  public static Vector3 GetUpVector(Quaternion q){
+  public static Vector3 GetUpVector(Quaternion q)
+  {
  
     return q * Vector3.up;
   }
  
   //Returns the right vector of a quaternion
-  public static Vector3 GetRightVector(Quaternion q){
+  public static Vector3 GetRightVector(Quaternion q)
+  {
  
     return q * Vector3.right;
   }
  
   //Gets a quaternion from a matrix
-  public static Quaternion QuaternionFromMatrix(Matrix4x4 m){ 
+  public static Quaternion QuaternionFromMatrix(Matrix4x4 m)
+  { 
  
     return Quaternion.LookRotation(m.GetColumn(2), m.GetColumn(1)); 
   }
  
   //Gets a position from a matrix
-  public static Vector3 PositionFromMatrix(Matrix4x4 m){
+  public static Vector3 PositionFromMatrix(Matrix4x4 m)
+  {
  
     Vector4 vector4Position = m.GetColumn(3);
     return new Vector3(vector4Position.x, vector4Position.y, vector4Position.z);
@@ -453,7 +494,8 @@ public class Math3d : Singleton<InputManager> {
   //customForward and customUp are in object space.
   //Usage: use alignWithVector and alignWithNormal as if you are using the default LookRotation function.
   //Set customForward and customUp to the vectors you wish to use instead of the default forward and up vectors.
-  public static void LookRotationExtended(ref GameObject gameObjectInOut, Vector3 alignWithVector, Vector3 alignWithNormal, Vector3 customForward, Vector3 customUp){
+  public static void LookRotationExtended(ref GameObject gameObjectInOut, Vector3 alignWithVector, Vector3 alignWithNormal, Vector3 customForward, Vector3 customUp)
+  {
  
     //Set the rotation of the destination
     Quaternion rotationA = Quaternion.LookRotation(alignWithVector, alignWithNormal);   
@@ -473,7 +515,8 @@ public class Math3d : Singleton<InputManager> {
   //Input: startChildRotation and startChildPosition: the transform of the child object at the time the objects are parented.
   //Output: childRotation and childPosition.
   //All transforms are in world space.
-  public static void TransformWithParent(out Quaternion childRotation, out Vector3 childPosition, Quaternion parentRotation, Vector3 parentPosition, Quaternion startParentRotation, Vector3 startParentPosition, Quaternion startChildRotation, Vector3 startChildPosition){
+  public static void TransformWithParent(out Quaternion childRotation, out Vector3 childPosition, Quaternion parentRotation, Vector3 parentPosition, Quaternion startParentRotation, Vector3 startParentPosition, Quaternion startChildRotation, Vector3 startChildPosition)
+  {
  
     childRotation = Quaternion.identity; 
     childPosition = Vector3.zero;
@@ -505,7 +548,8 @@ public class Math3d : Singleton<InputManager> {
   //triangleForward, triangleNormal, and trianglePosition are in object space.
   //trianglePosition is the mesh position of the triangle. The effect of the scale of the object is handled automatically.
   //trianglePosition can be set at any position, it does not have to be at a vertex or in the middle of the triangle.
-  public static void PreciseAlign(ref GameObject gameObjectInOut, Vector3 alignWithVector, Vector3 alignWithNormal, Vector3 alignWithPosition, Vector3 triangleForward, Vector3 triangleNormal, Vector3 trianglePosition){
+  public static void PreciseAlign(ref GameObject gameObjectInOut, Vector3 alignWithVector, Vector3 alignWithNormal, Vector3 alignWithPosition, Vector3 triangleForward, Vector3 triangleNormal, Vector3 trianglePosition)
+  {
  
     //Set the rotation.
     LookRotationExtended(ref gameObjectInOut, alignWithVector, alignWithNormal, triangleForward, triangleNormal);
@@ -522,7 +566,8 @@ public class Math3d : Singleton<InputManager> {
  
  
   //Convert a position, direction, and normal vector to a transform
-  public static void VectorsToTransform(ref GameObject gameObjectInOut, Vector3 positionVector, Vector3 directionVector, Vector3 normalVector){
+  public static void VectorsToTransform(ref GameObject gameObjectInOut, Vector3 positionVector, Vector3 directionVector, Vector3 normalVector)
+  {
  
     gameObjectInOut.transform.position = positionVector;      
     gameObjectInOut.transform.rotation = Quaternion.LookRotation(directionVector, normalVector);
@@ -534,7 +579,8 @@ public class Math3d : Singleton<InputManager> {
   //Returns 0 if point is on the line segment.
   //Returns 1 if point is outside of the line segment and located on the side of linePoint1.
   //Returns 2 if point is outside of the line segment and located on the side of linePoint2.
-  public static int PointOnWhichSideOfLineSegment(Vector3 linePoint1, Vector3 linePoint2, Vector3 point){
+  public static int PointOnWhichSideOfLineSegment(Vector3 linePoint1, Vector3 linePoint2, Vector3 point)
+  {
  
     Vector3 lineVec = linePoint2 - linePoint1;
     Vector3 pointVec = point - linePoint1;
@@ -542,16 +588,19 @@ public class Math3d : Singleton<InputManager> {
     float dot = Vector3.Dot(pointVec, lineVec);
  
     //point is on side of linePoint2, compared to linePoint1
-    if(dot > 0){
+    if(dot > 0)
+    {
  
       //point is on the line segment
-      if(pointVec.magnitude <= lineVec.magnitude){
+      if(pointVec.magnitude <= lineVec.magnitude)
+      {
  
         return 0;
       }
  
       //point is not on the line segment and it is on the side of linePoint2
-      else{
+      else
+      {
  
         return 2;
       }
@@ -559,7 +608,8 @@ public class Math3d : Singleton<InputManager> {
  
     //Point is not on side of linePoint2, compared to linePoint1.
     //Point is not on the line segment and it is on the side of linePoint1.
-    else{
+    else
+    {
  
       return 1;
     }
@@ -569,18 +619,21 @@ public class Math3d : Singleton<InputManager> {
   //Returns the pixel distance from the mouse pointer to a line.
   //Alternative for HandleUtility.DistanceToLine(). Works both in Editor mode and Play mode.
   //Do not call this function from OnGUI() as the mouse position will be wrong.
-  public static float MouseDistanceToLine(Vector3 linePoint1, Vector3 linePoint2){
+  public static float MouseDistanceToLine(Vector3 linePoint1, Vector3 linePoint2)
+  {
  
     Camera currentCamera;
     Vector3 mousePosition;
  
 #if UNITY_EDITOR
-    if(Camera.current != null){
+    if(Camera.current != null)
+    {
  
       currentCamera = Camera.current;
     }
  
-    else{
+    else
+    {
  
       currentCamera = Camera.main;
     }
@@ -609,18 +662,21 @@ public class Math3d : Singleton<InputManager> {
   //Alternative for HandleUtility.DistanceToCircle(). Works both in Editor mode and Play mode.
   //Do not call this function from OnGUI() as the mouse position will be wrong.
   //If you want the distance to a point instead of a circle, set the radius to 0.
-  public static float MouseDistanceToCircle(Vector3 point, float radius){
+  public static float MouseDistanceToCircle(Vector3 point, float radius)
+  {
  
     Camera currentCamera;
     Vector3 mousePosition;
  
 #if UNITY_EDITOR
-    if(Camera.current != null){
+    if(Camera.current != null)
+    {
  
       currentCamera = Camera.current;
     }
  
-    else{
+    else
+    {
  
       currentCamera = Camera.main;
     }
@@ -647,38 +703,44 @@ public class Math3d : Singleton<InputManager> {
   //Returns true if a line segment (made up of linePoint1 and linePoint2) is fully or partially in a rectangle
   //made up of RectA to RectD. The line segment is assumed to be on the same plane as the rectangle. If the line is 
   //not on the plane, use ProjectPointOnPlane() on linePoint1 and linePoint2 first.
-  public static bool IsLineInRectangle(Vector3 linePoint1, Vector3 linePoint2, Vector3 rectA, Vector3 rectB, Vector3 rectC, Vector3 rectD){
+  public static bool IsLineInRectangle(Vector3 linePoint1, Vector3 linePoint2, Vector3 rectA, Vector3 rectB, Vector3 rectC, Vector3 rectD)
+  {
  
     bool pointAInside = false;
     bool pointBInside = false;
  
     pointAInside = IsPointInRectangle(linePoint1, rectA, rectC, rectB, rectD);
  
-    if(!pointAInside){
+    if(!pointAInside)
+    {
  
       pointBInside = IsPointInRectangle(linePoint2, rectA, rectC, rectB, rectD);
     }
  
     //none of the points are inside, so check if a line is crossing
-    if(!pointAInside && !pointBInside){
+    if(!pointAInside && !pointBInside)
+    {
  
       bool lineACrossing = AreLineSegmentsCrossing(linePoint1, linePoint2, rectA, rectB);
       bool lineBCrossing = AreLineSegmentsCrossing(linePoint1, linePoint2, rectB, rectC);
       bool lineCCrossing = AreLineSegmentsCrossing(linePoint1, linePoint2, rectC, rectD);
       bool lineDCrossing = AreLineSegmentsCrossing(linePoint1, linePoint2, rectD, rectA);
  
-      if(lineACrossing || lineBCrossing || lineCCrossing || lineDCrossing){
+      if(lineACrossing || lineBCrossing || lineCCrossing || lineDCrossing)
+      {
  
         return true;
       }
  
-      else{
+      else
+      {
  
         return false;
       }
     }
  
-    else{
+    else
+    {
  
       return true;
     }
@@ -686,7 +748,8 @@ public class Math3d : Singleton<InputManager> {
  
   //Returns true if "point" is in a rectangle mad up of RectA to RectD. The line point is assumed to be on the same 
   //plane as the rectangle. If the point is not on the plane, use ProjectPointOnPlane() first.
-  public static bool IsPointInRectangle(Vector3 point, Vector3 rectA, Vector3 rectC, Vector3 rectB, Vector3 rectD){
+  public static bool IsPointInRectangle(Vector3 point, Vector3 rectA, Vector3 rectC, Vector3 rectB, Vector3 rectD)
+  {
  
     Vector3 vector;
     Vector3 linePoint;
@@ -716,7 +779,8 @@ public class Math3d : Singleton<InputManager> {
       return true;
     }
  
-    else{
+    else
+    {
  
       return false;
     }
@@ -724,7 +788,8 @@ public class Math3d : Singleton<InputManager> {
  
   //Returns true if line segment made up of pointA1 and pointA2 is crossing line segment made up of
   //pointB1 and pointB2. The two lines are assumed to be in the same plane.
-  public static bool AreLineSegmentsCrossing(Vector3 pointA1, Vector3 pointA2, Vector3 pointB1, Vector3 pointB2){
+  public static bool AreLineSegmentsCrossing(Vector3 pointA1, Vector3 pointA2, Vector3 pointB1, Vector3 pointB2)
+  {
  
     Vector3 closestPointA;
     Vector3 closestPointB;
@@ -737,24 +802,28 @@ public class Math3d : Singleton<InputManager> {
     bool valid = ClosestPointsOnTwoLines(out closestPointA, out closestPointB, pointA1, lineVecA.normalized, pointB1, lineVecB.normalized); 
  
     //lines are not parallel
-    if(valid){
+    if(valid)
+    {
  
       sideA = PointOnWhichSideOfLineSegment(pointA1, pointA2, closestPointA);
       sideB = PointOnWhichSideOfLineSegment(pointB1, pointB2, closestPointB);
  
-      if((sideA == 0) && (sideB == 0)){
+      if((sideA == 0) && (sideB == 0))
+      {
  
         return true;
       }
  
-      else{
+      else
+      {
  
         return false;
       }
     }
  
     //lines are parallel
-    else{
+    else
+    {
  
       return false;
     }
@@ -767,7 +836,8 @@ public class Math3d : Singleton<InputManager> {
   //Gravity is not taken into account but this can be added to the output if needed.
   //A low number of samples can give a jittery result due to rounding errors.
   //If more samples are used, the output is more smooth but has a higher latency.
-  public static bool LinearAcceleration(out Vector3 vector, Vector3 position, int samples){
+  public static bool LinearAcceleration(out Vector3 vector, Vector3 position, int samples)
+  {
  
     Vector3 averageSpeedChange = Vector3.zero;
     vector = Vector3.zero;
@@ -778,13 +848,15 @@ public class Math3d : Singleton<InputManager> {
  
     //Clamp sample amount. In order to calculate acceleration we need at least 2 changes
     //in speed, so we need at least 3 position samples.
-    if(samples < 3){
+    if(samples < 3)
+    {
  
       samples = 3;
     }
  
     //Initialize
-    if(positionRegister == null){
+    if(positionRegister == null)
+    {
  
       positionRegister = new Vector3[samples];
       posTimeRegister = new float[samples];
@@ -793,7 +865,8 @@ public class Math3d : Singleton<InputManager> {
     //Fill the position and time sample array and shift the location in the array to the left
     //each time a new sample is taken. This way index 0 will always hold the oldest sample and the
     //highest index will always hold the newest sample. 
-    for(int i = 0; i < positionRegister.Length - 1; i++){
+    for(int i = 0; i < positionRegister.Length - 1; i++)
+    {
  
       positionRegister[i] = positionRegister[i+1];
       posTimeRegister[i] = posTimeRegister[i+1];
@@ -804,16 +877,19 @@ public class Math3d : Singleton<InputManager> {
     positionSamplesTaken++;
  
     //The output acceleration can only be calculated if enough samples are taken.
-    if(positionSamplesTaken >= samples){
+    if(positionSamplesTaken >= samples)
+    {
  
       //Calculate average speed change.
-      for(int i = 0; i < positionRegister.Length - 2; i++){
+      for(int i = 0; i < positionRegister.Length - 2; i++)
+      {
  
         deltaDistance = positionRegister[i+1] - positionRegister[i];
         deltaTime = posTimeRegister[i+1] - posTimeRegister[i];
  
         //If deltaTime is 0, the output is invalid.
-        if(deltaTime == 0){
+        if(deltaTime == 0)
+        {
  
           return false;
         }
@@ -822,7 +898,8 @@ public class Math3d : Singleton<InputManager> {
         deltaDistance = positionRegister[i+2] - positionRegister[i+1];
         deltaTime = posTimeRegister[i+2] - posTimeRegister[i+1];
  
-        if(deltaTime == 0){
+        if(deltaTime == 0)
+        {
  
           return false;
         }
@@ -845,7 +922,8 @@ public class Math3d : Singleton<InputManager> {
       return true;    
     }
  
-    else{
+    else
+    {
  
       return false;
     }
@@ -876,7 +954,8 @@ public class Math3d : Singleton<InputManager> {
   dir = Math3d.SetVectorLength(dir, dir.magnitude * scale);
   dir = gameObject.transform.TransformDirection(dir);
   Debug.DrawRay(gameObject.transform.position, dir, Color.blue);  */
-  public static bool AngularAcceleration(out Vector3 vector, Quaternion rotation, int samples){
+  public static bool AngularAcceleration(out Vector3 vector, Quaternion rotation, int samples)
+  {
  
     Vector3 averageSpeedChange = Vector3.zero;
     vector = Vector3.zero;
@@ -887,13 +966,15 @@ public class Math3d : Singleton<InputManager> {
  
     //Clamp sample amount. In order to calculate acceleration we need at least 2 changes
     //in speed, so we need at least 3 rotation samples.
-    if(samples < 3){
+    if(samples < 3)
+    {
  
       samples = 3;
     }
  
     //Initialize
-    if(rotationRegister == null){
+    if(rotationRegister == null)
+    {
  
       rotationRegister = new Quaternion[samples];
       rotTimeRegister = new float[samples];
@@ -902,7 +983,8 @@ public class Math3d : Singleton<InputManager> {
     //Fill the rotation and time sample array and shift the location in the array to the left
     //each time a new sample is taken. This way index 0 will always hold the oldest sample and the
     //highest index will always hold the newest sample. 
-    for(int i = 0; i < rotationRegister.Length - 1; i++){
+    for(int i = 0; i < rotationRegister.Length - 1; i++)
+    {
  
       rotationRegister[i] = rotationRegister[i+1];
       rotTimeRegister[i] = rotTimeRegister[i+1];
@@ -913,16 +995,19 @@ public class Math3d : Singleton<InputManager> {
     rotationSamplesTaken++;
  
     //The output acceleration can only be calculated if enough samples are taken.
-    if(rotationSamplesTaken >= samples){
+    if(rotationSamplesTaken >= samples)
+    {
  
       //Calculate average speed change.
-      for(int i = 0; i < rotationRegister.Length - 2; i++){
+      for(int i = 0; i < rotationRegister.Length - 2; i++)
+      {
  
         deltaRotation = SubtractRotation(rotationRegister[i+1], rotationRegister[i]);
         deltaTime = rotTimeRegister[i+1] - rotTimeRegister[i];
  
         //If deltaTime is 0, the output is invalid.
-        if(deltaTime == 0){
+        if(deltaTime == 0)
+        {
  
           return false;
         }
@@ -931,7 +1016,8 @@ public class Math3d : Singleton<InputManager> {
         deltaRotation = SubtractRotation(rotationRegister[i+2], rotationRegister[i+1]);
         deltaTime = rotTimeRegister[i+2] - rotTimeRegister[i+1];
  
-        if(deltaTime == 0){
+        if(deltaTime == 0)
+        {
  
           return false;
         }
@@ -954,7 +1040,8 @@ public class Math3d : Singleton<InputManager> {
       return true;    
     }
  
-    else{
+    else
+    {
  
       return false;
     }
@@ -962,7 +1049,8 @@ public class Math3d : Singleton<InputManager> {
  
   //Get y from a linear function, with x as an input. The linear function goes through points
   //0,0 on the left ,and Qxy on the right.
-  public static float LinearFunction2DBasic(float x, float Qx, float Qy){
+  public static float LinearFunction2DBasic(float x, float Qx, float Qy)
+  {
  
     float y = x * (Qy / Qx);
  
@@ -971,7 +1059,8 @@ public class Math3d : Singleton<InputManager> {
  
   //Get y from a linear function, with x as an input. The linear function goes through points
   //Pxy on the left ,and Qxy on the right.
-  public static float LinearFunction2DFull(float x, float Px, float Py, float Qx, float Qy){
+  public static float LinearFunction2DFull(float x, float Px, float Py, float Qx, float Qy)
+  {
  
     float y = 0f;
  
@@ -986,38 +1075,45 @@ public class Math3d : Singleton<InputManager> {
  
   //Convert a rotation difference to a speed vector.
   //For internal use only.
-  private static Vector3 RotDiffToSpeedVec(Quaternion rotation, float deltaTime){
+  private static Vector3 RotDiffToSpeedVec(Quaternion rotation, float deltaTime)
+  {
  
     float x;
     float y;
     float z;
  
-    if(rotation.eulerAngles.x <= 180.0f){
+    if(rotation.eulerAngles.x <= 180.0f)
+    {
  
       x = rotation.eulerAngles.x;
     }
  
-    else{
+    else
+    {
  
       x = rotation.eulerAngles.x - 360.0f;
     }
  
-    if(rotation.eulerAngles.y <= 180.0f){
+    if(rotation.eulerAngles.y <= 180.0f)
+    {
  
       y = rotation.eulerAngles.y;
     }
  
-    else{
+    else
+    {
  
       y = rotation.eulerAngles.y - 360.0f;
     }
  
-    if(rotation.eulerAngles.z <= 180.0f){
+    if(rotation.eulerAngles.z <= 180.0f)
+    {
  
       z = rotation.eulerAngles.z;
     }
  
-    else{
+    else
+    {
  
       z = rotation.eulerAngles.z - 360.0f;
     }

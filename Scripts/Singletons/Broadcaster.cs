@@ -4,35 +4,87 @@ using System.Collections;
 using System.Collections.Generic;
 // using Photon;
 
-public class Broadcaster : Singleton<Broadcaster> {
-  // void Awake() {Initialize();}
-  void Start() {this.GetDispatcher().Trigger("start");}
-  void Update() {this.GetDispatcher().Trigger("update");}
-  void FixedUpdate() {this.GetDispatcher().Trigger("fixed_update");}
-  void LateUpdate() {this.GetDispatcher().Trigger("late_update");}
+public class Broadcaster : Singleton<Broadcaster> 
+{
+  // void Awake()
+   {
+    Initialize();
+  }
+  void Start() {
+    this.GetDispatcher().Trigger("start");
+  }
+  void Update() 
+  {
+    this.GetDispatcher().Trigger("update");
+  }
+  void FixedUpdate() 
+  {
+    this.GetDispatcher().Trigger("fixed_update");
+  }
+  void LateUpdate() 
+  {
+    this.GetDispatcher().Trigger("late_update");
+  }
 
-  void OnConnectedToServer() {this.GetDispatcher().Trigger("client.connect");}
-  void OnDisconnectedFromServer() {this.GetDispatcher().Trigger("client.disconnect");}
-  void OnFailedToConnect() {this.GetDispatcher().Trigger("client.connect.fail");}
-  void OnFailedToConnectToMasterServer() {this.GetDispatcher().Trigger("tracker.connect.fail");}
-  void OnServerInitialized() {this.GetDispatcher().Trigger("server.start");}
-  void OnPlayerConnected() {this.GetDispatcher().Trigger("server.player.connect");}
-  void OnPlayerDisconnected() {this.GetDispatcher().Trigger("server.player.disconnect");}
+  void OnConnectedToServer() 
+  {
+    this.GetDispatcher().Trigger("client.connect");
+  }
+  void OnDisconnectedFromServer() 
+  {
+    this.GetDispatcher().Trigger("client.disconnect");
+  }
+  void OnFailedToConnect()
+   {
+    this.GetDispatcher().Trigger("client.connect.fail");
+  }
+  void OnFailedToConnectToMasterServer()
+   {
+    this.GetDispatcher().Trigger("tracker.connect.fail");
+  }
+  void OnServerInitialized()
+   {
+    this.GetDispatcher().Trigger("server.start");
+  }
+  void OnPlayerConnected() 
+  {
+    this.GetDispatcher().Trigger("server.player.connect");
+  }
+  void OnPlayerDisconnected()
+   {
+    this.GetDispatcher().Trigger("server.player.disconnect");
+  }
 
-  void OnPreCull() {this.GetDispatcher().Trigger("render.pre_cull");}
-  void OnPreRender() {this.GetDispatcher().Trigger("render.before");}
-  void OnRenderObject() {this.GetDispatcher().Trigger("render");}
-  void OnPostRender() {this.GetDispatcher().Trigger("render.late");}
-  void OnRenderImage(RenderTexture src, RenderTexture dest) {
+  void OnPreCull()
+   {
+    this.GetDispatcher().Trigger("render.pre_cull");
+  }
+  void OnPreRender() 
+  {
+    this.GetDispatcher().Trigger("render.before");
+  }
+  void OnRenderObject() 
+  {
+    this.GetDispatcher().Trigger("render");
+  }
+  void OnPostRender() 
+  {
+    this.GetDispatcher().Trigger("render.late");
+  }
+  void OnRenderImage(RenderTexture src, RenderTexture dest)
+   {
     this.GetDispatcher().Trigger("render.done");
   }
 
-  void OnGUI() {
+  void OnGUI() 
+  {
     Event e = Event.current;
     this.GetDispatcher().Trigger("gui");
-    do {
+    do
+     {
       this.GetDispatcher().Trigger("gui_"+e.type);
-    } while(Event.PopEvent(e));
+    } 
+    while(Event.PopEvent(e));
   }
 
 /*

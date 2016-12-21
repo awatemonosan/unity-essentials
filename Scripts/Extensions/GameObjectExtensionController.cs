@@ -2,7 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class GameObjectExtensionController : MonoBehaviour {
+public class GameObjectExtensionController : MonoBehaviour
+ {
 // Variables
   static int nextID = 0;
 
