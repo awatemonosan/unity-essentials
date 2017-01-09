@@ -2,7 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
-class Impact {
+class Impact 
+{
   public Vector3 normal;
   public Collider otherCollider;
   public Vector3 point;
@@ -13,26 +14,32 @@ class Impact {
   public Vector3 relativeVelocity;
 }
 
-public class RigidbodyExtensionController : MonoBehaviour {
+public class RigidbodyExtensionController : MonoBehaviour
+{
   public float maxSlope = 45;
   public Vector3 groundNormal = Physics.gravity;
   private Hashtable impacts = new Hashtable();
-  void Start(){
+  void Start()
+  {
     gameObject.GetDispatcher().On("late_update", this.ResetEverything);
     gameObject.GetDispatcher().On("collision_stay", this.HandleCollision);
   }
 
-  public bool IsOnGround(){
+  public bool IsOnGround()
+  {
     return Vector3.Dot(groundNormal, Physics.gravity.normalized) > ((1f-maxSlope/180)*2f-1f);
   }
 
-  public bool IsTouching(Object other){
+  public bool IsTouching(Object other)
+  {
     return impacts.ContainsKey(other);
   }
 
-  private bool HandleCollision(Hashtable payload){
+  private bool HandleCollision(Hashtable payload)
+  {
     Collision collision = (Collision)payload.GetAs<Collision>("collision");
-    foreach( ContactPoint contact in collision.contacts ){
+    foreach( ContactPoint contact in collision.contacts )
+    {
       //Register impact
       Impact impact = new Impact();
 
@@ -57,7 +64,8 @@ public class RigidbodyExtensionController : MonoBehaviour {
     return true;
   }
 
-  public bool ResetEverything(Hashtable _){
+  public bool ResetEverything(Hashtable _)
+  {
     impacts = new Hashtable();
     groundNormal = Physics.gravity * -1;
     return true;

@@ -53,7 +53,8 @@ public static class GameObjectExtension
 // Old stuff |
 //           V
 
-  public static void SetVertexColor(this GameObject that, Color color){
+  public static void SetVertexColor(this GameObject that, Color color)
+  {
     MeshFilter meshFilter = that.GetComponent<MeshFilter>();
     Debug.Log("Setting Vertex Color");
     if(meshFilter == null) return;
@@ -75,16 +76,20 @@ public static class GameObjectExtension
 /*===========================================================================*/
 /// Physics helpers
 /*===========================================================================*/
-  public static void IgnoreCollision(this GameObject that, GameObject other, bool ignore=true) {
+  public static void IgnoreCollision(this GameObject that, GameObject other, bool ignore=true) 
+  {
     Collider thatCollider = that.GetComponent<Collider>();
     Collider otherCollider = other.GetComponent<Collider>();
 
-    if(thatCollider != null && otherCollider != null) {
+    if(thatCollider != null && otherCollider != null)
+    {
       Physics.IgnoreCollision(thatCollider, otherCollider, ignore);
     }
 
-    foreach(Transform thatChild in that.transform) {
-      foreach(Transform otherChild in other.transform) {
+    foreach(Transform thatChild in that.transform)
+    {
+      foreach(Transform otherChild in other.transform)
+      {
         that.IgnoreCollision(otherChild.gameObject, ignore);
         other.IgnoreCollision(thatChild.gameObject, ignore);
         thatChild.gameObject.IgnoreCollision(otherChild.gameObject, ignore);
@@ -95,13 +100,23 @@ public static class GameObjectExtension
 /*===========================================================================*/
 /// Data helpers
 /*===========================================================================*/
-  public static Hashtable Data(this GameObject that) {
+  public static Hashtable Data(this GameObject that)
+  {
     return that.WithComponent<GameObjectExtensionController>().data;
   }
 
-  public static Selection Query(this GameObject that, string queryString) { return that.Query(queryString); }
-  public static Selection Query(this GameObject that, string[] queryArray) { return that.Query(queryArray); }
+  public static Selection Query(this GameObject that, string queryString)
+  { 
+    return that.Query(queryString);
+     }
+  public static Selection Query(this GameObject that, string[] queryArray) 
+  { 
+    return that.Query(queryArray); 
+  }
 
-  public static T WithComponent<T>(this GameObject that) { return that.WithComponent<T>(); }
+  public static T WithComponent<T>(this GameObject that) 
+  { 
+    return that.WithComponent<T>();
+     }
 
 }

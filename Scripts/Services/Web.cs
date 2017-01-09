@@ -4,17 +4,20 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
  
-public class Web : Singleton<Web> {
+public class Web : Singleton<Web>
+ {
   public static IEnumerator WaitForWWW(WWW www)
   {
     yield return www;
   }
 
-  public static string Get(string url){
+  public static string Get(string url)
+  {
     return (new WWW(url)).text;
   }
 
-  public static WWW PostWWW(string url, Hashtable payload){
+  public static WWW PostWWW(string url, Hashtable payload)
+  {
     Dictionary<string, string> headers = new Dictionary<string, string>();
     headers.Add( "Content-Type", "application/json" );
 
@@ -24,11 +27,14 @@ public class Web : Singleton<Web> {
 
     instance.StartCoroutine(WaitForWWW(www));
     //do nothing untill json is loaded
-    while (!www.isDone) { /*Do Nothing*/ }
+    while (!www.isDone)
+     { /*Do Nothing*/ 
+     }
     
     return www;
   }
-  public static string Post(string url, Hashtable payload){
+  public static string Post(string url, Hashtable payload)
+{
     return PostWWW(url, payload).text;
   }
 
