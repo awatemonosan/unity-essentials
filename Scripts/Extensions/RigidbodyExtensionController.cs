@@ -30,8 +30,8 @@ public class RigidbodyExtensionController : MonoBehaviour {
     return impacts.ContainsKey(other);
   }
 
-  private bool HandleCollision(Hashtable payload){
-    Collision collision = (Collision)payload.GetAs<Collision>("collision");
+  private bool HandleCollision(UModel payload){
+    Collision collision = payload.Get<Collision>("collision");
     foreach( ContactPoint contact in collision.contacts ){
       //Register impact
       Impact impact = new Impact();
@@ -57,7 +57,7 @@ public class RigidbodyExtensionController : MonoBehaviour {
     return true;
   }
 
-  public bool ResetEverything(Hashtable _){
+  public bool ResetEverything(UModel _){
     impacts = new Hashtable();
     groundNormal = Physics.gravity * -1;
     return true;
