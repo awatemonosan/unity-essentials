@@ -4,7 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
  
-public class Web : Singleton<Web> {
+public class UNetwork : Singleton<UNetwork> {
   public static IEnumerator WaitForWWW(WWW www)
   {
     yield return www;
@@ -14,21 +14,22 @@ public class Web : Singleton<Web> {
     return (new WWW(url)).text;
   }
 
-  public static WWW PostWWW(string url, Hashtable payload){
+  public static WWW PostWWW(string url, UModel payload){
     Dictionary<string, string> headers = new Dictionary<string, string>();
     headers.Add( "Content-Type", "application/json" );
 
-    string json = JSON.Serialize(payload);
+    string json = payload.Serialize();
     byte[] utfBytes = System.Text.Encoding.UTF8.GetBytes(json);
     WWW www = new WWW(url, utfBytes, headers);
 
-    instance.StartCoroutine(WaitForWWW(www));
+    WithInstance().StartCoroutine(WaitForWWW(www));
     //do nothing untill json is loaded
     while (!www.isDone) { /*Do Nothing*/ }
     
     return www;
   }
-  public static string Post(string url, Hashtable payload){
+  
+  public static string Post(string url, UModel payload){
     return PostWWW(url, payload).text;
   }
 

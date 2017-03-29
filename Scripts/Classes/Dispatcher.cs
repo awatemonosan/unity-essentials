@@ -4,37 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public delegate bool Callback(Hashtable payload);
-
-public class DispatcherListener
-{
-  public Callback callback;
-  public Hashtable defaultPayload;
-
-  public DispatcherListener(Callback callback, Hashtable payload)
-  {
-    this.callback = callback;
-    this.defaultPayload = payload;
-  }
-
-  public bool Trigger(Hashtable payload)
-  {
-    if(this.callback != null)
-    {
-      Hashtable combinedPayload = this.defaultPayload.Copy().Merge(payload);
-      return this.callback(combinedPayload);
-    }
-    else
-    {
-      return false;
-    }
-  }
-
-  public void Release()
-  {
-    this.callback = null;
-  }
-}
+public delegate bool Callback(UModel payload);
 
 public class Dispatcher
 {
@@ -44,42 +14,48 @@ public class Dispatcher
 
   private int lastEventID = -1;
 
-  public bool Trigger(string eventName)
+  public static bool Log(UModel payload)
   {
-    return this.Trigger(eventName, new Hashtable());
+    Debug.Log(payload.Serialize());
+    return true;
   }
 
-  public bool Trigger(string eventName, Hashtable payload)
+  public bool Trigger(string eventName)
   {
-    payload["event"] = eventName;
+    return this.Trigger(eventName, new UModel());
+  }
+
+  public bool Trigger(string eventName, UModel payload)
+  {
+    payload.Set("event", eventName);
     return this.Trigger(payload);
   }
 
   public bool Trigger(string eventName, object obj)
   {
-    Hashtable payload = new Hashtable();
-    payload["event"] = eventName;
-    payload["value"] = obj;
+    UModel payload = new UModel();
+    payload.Set("event", eventName);
+    payload.Set("value", obj);
     return this.Trigger(payload);
   }
 
-  public bool Trigger(Hashtable payload)
+  public bool Trigger(UModel payload)
   {
-    if(!payload.ContainsKey("eventID"))
+    if(!payload.Has("eventID"))
     {
-      payload["eventID"] = eventID;
+      payload.Set("eventID", eventID);
       eventID++;
     }
-    else if(this.lastEventID == (int)payload["eventID"])
+    else if(this.lastEventID == payload.Get<int>("eventID"))
     {
       return true;
     }
     
-    this.lastEventID = (int)payload["eventID"];
+    this.lastEventID = payload.Get<int>("eventID");
 
-    if(payload["event"] == null) return true;
-    string eventName = ((string)payload["event"]);
-    payload["event"] = eventName = eventName.ToLower();
+    string eventName = payload.Get<string>("event");
+    if(eventName == null) return true;
+    payload.Set("event", eventName = eventName.ToLower());
 
     // if(this.bindings.ContainsKey(eventName))
     //   Trigger(this.bindings[eventName]);
@@ -123,17 +99,19 @@ public class Dispatcher
     if(lastPeriod != -1)
     {
       eventName = eventName.Substring(0, lastPeriod);
-      this.Trigger(eventName, payload);
+      UModel newPayload = new UModel(payload);
+      newPayload.Remove("eventID");
+      this.Trigger(eventName, newPayload);
     }
     return true;
   }
 
   public DispatcherListener On(string eventName, Callback callback)
   {
-    return this.On(eventName, callback, new Hashtable());
+    return this.On(eventName, callback, new UModel());
   }
 
-  public DispatcherListener On(string eventName, Callback callback, Hashtable payload)
+  public DispatcherListener On(string eventName, Callback callback, UModel payload)
   {
     eventName = eventName.ToLower();
 
@@ -172,7 +150,7 @@ public class Dispatcher
   }
 
   private Dictionary<long, ArrayList> timedTriggers = new Dictionary<long, ArrayList>( );
-  public void ProcessTimedTriggers(Hashtable _)
+  public void ProcessTimedTriggers(UModel _)
   {
     long currentTime = DateTime.Now.Ticks;
 
@@ -186,26 +164,26 @@ public class Dispatcher
 
     foreach(long key in toTrigger)
     {
-      foreach(Hashtable payload in timedTriggers[key])
+      foreach(UModel payload in timedTriggers[key])
         Trigger(payload);
 
       timedTriggers.Remove(key);
     }
   }
 
-  public void TriggerIn(Hashtable payload, float time)
+  public void TriggerIn(UModel payload, float time)
   {
     TriggerIn(payload, (long)(time*1000));
   }
-  public void TriggerAt(Hashtable payload, float time)
+  public void TriggerAt(UModel payload, float time)
   {
     TriggerAt(payload, (long)(time*1000));
   }
-  public void TriggerIn(Hashtable payload, long time)
+  public void TriggerIn(UModel payload, long time)
   {
     TriggerAt(payload, DateTime.Now.Ticks+time);
   }
-  public void TriggerAt(Hashtable payload, long time)
+  public void TriggerAt(UModel payload, long time)
   {
     if(!timedTriggers.ContainsKey(time)) timedTriggers[time] = new ArrayList();
 
@@ -223,3 +201,34 @@ public class Dispatcher
   }
 */
 }
+
+public class DispatcherListener
+{
+  public Callback callback;
+  public UModel defaultPayload;
+
+  public DispatcherListener(Callback callback, UModel payload)
+  {
+    this.callback = callback;
+    this.defaultPayload = payload;
+  }
+
+  public bool Trigger(UModel payload)
+  {
+    if(this.callback != null)
+    {
+      UModel combinedPayload = this.defaultPayload.Clone().Merge(payload);
+      return this.callback(combinedPayload);
+    }
+    else
+    {
+      return false;
+    }
+  }
+
+  public void Release()
+  {
+    this.callback = null;
+  }
+}
+

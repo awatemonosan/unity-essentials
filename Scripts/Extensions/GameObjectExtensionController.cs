@@ -7,6 +7,7 @@ public class GameObjectExtensionController : MonoBehaviour {
   static int nextID = 0;
 
   private Dispatcher dispatcher = new Dispatcher();
+  private UModel model = new UModel( );
   private int _ID;
   public int ID
   {
@@ -16,148 +17,99 @@ public class GameObjectExtensionController : MonoBehaviour {
     }
   }
 
-  public Hashtable data = new Hashtable( );
-
 // MonoBehavior messages
 
   void Start( )
   {
-    this._ID = nextID++;
+    this.model.Lock("id", nextID++);
+    this.model.dispatcher.On("all", this.dispatcher.Trigger);
   }
+
+// extended behaviors
 
   public Dispatcher GetDispatcher()
   {
     return this.dispatcher;
   }
 
+  public UModel GetModel()
+  {
+    return this.model;
+  }
+
   public void AnimKeyframe(string evnt)
   {
-    Hashtable payload = new Hashtable( );
-    payload["keyframe"] = evnt;
+    UModel payload = UModel.Parse(evnt);
+    payload.Set("raw", evnt);
     this.GetDispatcher().Trigger("keyframe", payload);
   }
 
-  private void SendUp(Hashtable payload)
+  public bool HasComponent<T> () where T : Component
   {
-    Transform upTransform = this.transform.Up();
-    if(!upTransform) return;
-    upTransform.gameObject.GetDispatcher().Trigger(payload);
+    return this.GetComponent<T>() != null;
   }
 
+  // public bool HasComponent(string componentName)
+  // {
+  //   return this.gameObject.GetComponenet(componentName) != null;
+  // }
+
 // UQUERY OBJECT STATE MANAGEMENT
-//*experimental feature
 
   public string GetState(string stateName)
   {
-    UQueryState stateComponent = FindStateComponent(stateName);
-    if (!stateComponent) return "";
-    return stateComponent.state;
+    return this.model.GetChild("_ukulele").GetChild("states").Get<string>(stateName);
   }
 
   public void SetState(string stateName, string state)
   {
-    UQueryState stateComponent = FindStateComponent(stateName);
-
-    if (!stateComponent)
-    {
-      stateComponent = this.gameObject.AddComponent<UQueryState>();
-      stateComponent.name = stateName;
-    }
-
-    stateComponent.state = state;
-  }
-
-  private UQueryState FindStateComponent(string stateName)
-  {
-    foreach (UQueryState stateComponent in this.gameObject.GetComponents(typeof(UQueryState)))
-    {
-      if (stateComponent.name == name) return stateComponent;
-    }
-
-    return null;
+    this.model.GetChild("_ukulele").GetChild("states").Set(stateName, state);
   }
 
 // UQUERY OBJECT CLASS MANAGEMENT
 
   public void AddClass(string className)
   {
-    if (this.HasClass(className)) return;
-    UQueryClassName classNameComponent = gameObject.AddComponent<UQueryClassName>();
-    classNameComponent.className = className;
+    this.model.GetChild("_ukulele").GetChild("classes").Set(className, true);
   }
 
   public void RemoveClass(string className)
   {
-    UQueryClassName classNameComponent = this.FindClassNameComponent(className);
-    if (!classNameComponent) return;
-    GameObject.Destroy(classNameComponent);
+    this.model.GetChild("_ukulele").GetChild("classes").Remove(className);
   }
 
   public bool HasClass(string className)
   {
-    UQueryClassName classNameComponent = this.FindClassNameComponent(className);
-    return !!classNameComponent;
-  }
-
-  private UQueryClassName FindClassNameComponent(string stateName)
-  {
-    foreach (UQueryClassName classNameComponent in this.gameObject.GetComponents(typeof(UQueryClassName)))
-    {
-      if (classNameComponent.name == name) return classNameComponent;
-    }
-    return null;
+    return this.model.GetChild("_ukulele").GetChild("classes").Has(className);
   }
 
 // UQUERY OBJECT ID MANAGEMENT
 
   public void AddID(string id)
   {
-    if (this.HasID(id)) return;
-    UQueryID idComponent = gameObject.AddComponent<UQueryID>();
-    idComponent.id = id;
+    UQuery.Query("." + id).RemoveID(id);
+    this.model.GetChild("_ukulele").GetChild("ids").Set(id, true);
   }
 
   public void RemoveID(string id)
   {
-    UQueryID idComponent = this.FindIDComponent(id);
-    if (!idComponent) return;
-    GameObject.Destroy(idComponent);
+    this.model.GetChild("_ukulele").GetChild("ids").Remove(id);
   }
 
   public bool HasID(string id)
   {
-    UQueryID idComponent = this.FindIDComponent(id);
-    return !!idComponent;
-  }
-
-  private UQueryID FindIDComponent(string id)
-  {
-    foreach (UQueryID idComponent in this.gameObject.GetComponents(typeof(UQueryID)))
-    {
-      if (idComponent.id == id) return idComponent;
-    }
-    return null;
+    return this.model.GetChild("_ukulele").GetChild("ids").Has(id);
   }
 
 // Helpers
   
-  public Selection Query(string queryString)
+  public USelection Query(string queryString)
   {
-    return new Selection(this.gameObject).Query(queryString);
+    return UQuery.Query(this.gameObject, queryString);
   }
 
-  public Selection Query(string[] queryArray)
+  public USelection Query(string[] queryArray)
   {
-    return new Selection(this.gameObject).Query(queryArray);
-  }
-
-  public T WithComponent<T>() where T : Component
-  {
-    T component = this.gameObject.GetComponent<T>();
-    if (!component)
-    {
-      component = this.gameObject.AddComponent<T>();
-    }
-    return component;
+    return UQuery.Query(this.gameObject, queryArray);
   }
 }

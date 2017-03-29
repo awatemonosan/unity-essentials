@@ -3,7 +3,7 @@
 using System;
 using System.Collections;
  
-public class Math3d : Singleton<InputManager> {
+public class UMath3d : Singleton<UMath3d> {
  
   private static Transform tempChild = null;
   private static Transform tempParent = null;
@@ -16,10 +16,10 @@ public class Math3d : Singleton<InputManager> {
   private static float[] rotTimeRegister;
   private static int rotationSamplesTaken = 0;
  
-  public static void Init(){
-    // TODO: refactor this out and use singleton pattern everywhere in here (Math3d.cs)
-    tempChild = (new GameObject("Math3d_TempChild")).transform;
-    tempParent = (new GameObject("Math3d_TempParent")).transform;
+  public static void Start(){
+    // TODO: use singleton pattern
+    tempChild = (new GameObject("UMath3d_TempChild")).transform;
+    tempParent = (new GameObject("UMath3d_TempParent")).transform;
  
                 tempChild.gameObject.hideFlags = HideFlags.HideAndDontSave;
                 MonoBehaviour.DontDestroyOnLoad(tempChild.gameObject);
@@ -30,7 +30,6 @@ public class Math3d : Singleton<InputManager> {
     //set the parent
     tempChild.parent = tempParent;
   }
- 
  
   //increase or decrease the length of vector by size
   public static Vector3 AddVectorLength(Vector3 vector, float size){
@@ -865,15 +864,15 @@ public class Math3d : Singleton<InputManager> {
   Vector3 dir;
   float scale = 2f; 
   dir = new Vector3(vector.x, 0, 0);
-  dir = Math3d.SetVectorLength(dir, dir.magnitude * scale);
+  dir = UMath3d.SetVectorLength(dir, dir.magnitude * scale);
   dir = gameObject.transform.TransformDirection(dir);
   Debug.DrawRay(gameObject.transform.position, dir, Color.red); 
   dir = new Vector3(0, vector.y, 0);
-  dir = Math3d.SetVectorLength(dir, dir.magnitude * scale);
+  dir = UMath3d.SetVectorLength(dir, dir.magnitude * scale);
   dir = gameObject.transform.TransformDirection(dir);
   Debug.DrawRay(gameObject.transform.position, dir, Color.green); 
   dir = new Vector3(0, 0, vector.z);
-  dir = Math3d.SetVectorLength(dir, dir.magnitude * scale);
+  dir = UMath3d.SetVectorLength(dir, dir.magnitude * scale);
   dir = gameObject.transform.TransformDirection(dir);
   Debug.DrawRay(gameObject.transform.position, dir, Color.blue);  */
   public static bool AngularAcceleration(out Vector3 vector, Quaternion rotation, int samples){
