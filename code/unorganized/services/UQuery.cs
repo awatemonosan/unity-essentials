@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -245,7 +245,7 @@ public class UQuery : Singleton<UQuery>
 //     }
 //     return this;
 //   }
-//   public USelection Trigger (string evnt, UData payload)
+//   public USelection Trigger (string evnt, object payload)
 //   {
 //     foreach (GameObject gameObject in contents)
 //     {
@@ -253,7 +253,7 @@ public class UQuery : Singleton<UQuery>
 //     }
 //     return this;
 //   }
-//   public USelection Trigger (UData payload)
+//   public USelection Trigger (object payload)
 //   {
 //     foreach (GameObject gameObject in contents)
 //     {

@@ -4,6 +4,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
+using Ukulele;
+
 public class UInput : Singleton<UInput>
 {
   private static Dictionary<string, InputWrapper> inputName2Input = new Dictionary<string, InputWrapper>( );
@@ -382,7 +384,7 @@ public class UInput : Singleton<UInput>
 }
 
 public class InputWrapper {
-  protected UData defaultPayload = new UData();
+  protected Hashtable defaultPayload = new Hashtable();
   private float current = 0;
   private float previous = 0;
 
@@ -405,7 +407,7 @@ public class InputWrapper {
     float state = this.State();
     float oldState = state - this.Delta();
 
-    UData payload = new UData(defaultPayload);
+    Hashtable payload = new Hashtable(defaultPayload);
     payload.Set("input", this.inputName);
     payload.Set("state", state);
     payload.Set("delta", this.Delta());

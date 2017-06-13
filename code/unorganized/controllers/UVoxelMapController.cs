@@ -2,103 +2,139 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class UVoxelMapController {
-  UData model, voxelMap, chunkMap;
-  public Dispatcher dispatcher = new Dispatcher();
-  // emits:
-  // voxel_updated
-  // chunk_created
-  // chunk_destroyed
+using Ukulele;
 
-  public UVoxelMapController(UData model) {
-    this.model = model;
+namespace Ukulele
+{
+    public class UVoxelMapController
+    {
+        Hashtable data, voxelMap, chunkMap;
+        public Dispatcher dispatcher = new Dispatcher();
+        // emits:
+        // voxel_updated
+        // chunk_created
+        // chunk_destroyed
 
-    this.model.Default<int>("chunkSize", 5);
+        public UVoxelMapController(Hashtable data)
+        {
+            // this.data = data;
 
-    this.model.Default<int>("xMin", 0);
-    this.model.Default<int>("yMin", 0);
-    this.model.Default<int>("zMin", 0);
+            // this.data.Default<int>("chunkSize", 5);
 
-    this.model.Default<int>("xMax", 0);
-    this.model.Default<int>("yMax", 0);
-    this.model.Default<int>("zMax", 0);
+            // this.data.Default<int>("xMin", 0);
+            // this.data.Default<int>("yMin", 0);
+            // this.data.Default<int>("zMin", 0);
 
-    this.voxelMap = this.model.GetChild("voxelMap");
-    this.chunkMap = this.model.GetChild("chunkMap");
-  }
-  
-  public int GetChunkSize() { return this.model.Get<int>("chunkSize"); }
+            // this.data.Default<int>("xMax", 0);
+            // this.data.Default<int>("yMax", 0);
+            // this.data.Default<int>("zMax", 0);
 
-  public Vector3 GetLowerBound() { return new Vector3(this.GetXMin(), this.GetYMin(), this.GetZMin()); }
-  public Vector3 GetUpperBound() { return new Vector3(this.GetXMin(), this.GetYMin(), this.GetZMin()); }
+            // this.voxelMap = this.data.GetSub("voxelMap");
+            // this.chunkMap = this.data.GetSub("chunkMap");
+        }
+        
+        public int GetChunkSize()
+        { return this.data.Get<int>("chunkSize"); }
 
-  public int GetXMin() { return this.model.Get<int>("xMin"); }
-  public int GetXMax() { return this.model.Get<int>("xMax"); }
+        public Vector3 GetLowerBound()
+        { return new Vector3(this.GetXMin(), this.GetYMin(), this.GetZMin()); }
+        public Vector3 GetUpperBound()
+        { return new Vector3(this.GetXMin(), this.GetYMin(), this.GetZMin()); }
 
-  public int GetYMin() { return this.model.Get<int>("yMin"); }
-  public int GetYMax() { return this.model.Get<int>("yMax"); }
+        public int GetXMin()
+        { return this.data.Get<int>("xMin"); }
+        public int GetXMax()
+        { return this.data.Get<int>("xMax"); }
 
-  public int GetZMin() { return this.model.Get<int>("zMin"); }
-  public int GetZMax() { return this.model.Get<int>("zMax"); }
+        public int GetYMin()
+        { return this.data.Get<int>("yMin"); }
+        public int GetYMax()
+        { return this.data.Get<int>("yMax"); }
 
-  public bool HasAt(int x, int y, int z) {
-    if (!this.voxelMap.Has(x)) { return false; }
-    if (!this.voxelMap.GetChild(x).Has(y)) { return false; }
-    if (!this.voxelMap.GetChild(x).GetChild(y).Has(z)) { return false; }
-    return true;
-  }
+        public int GetZMin()
+        { return this.data.Get<int>("zMin"); }
+        public int GetZMax()
+        { return this.data.Get<int>("zMax"); }
 
-  public void SetAt(UData voxelData, int x, int y, int z) {
-    this.voxelMap.GetChild(x).GetChild(y).GetChild(z).Merge(voxelData);
+        public bool HasAt(int x, int y, int z)
+        {
+            if (!this.voxelMap.Has(x))
+            { return false; }
+            if (!this.voxelMap.GetSub(x).Has(y))
+            { return false; }
+            if (!this.voxelMap.GetSub(x).GetSub(y).Has(z))
+            { return false; }
+            return true;
+        }
 
-    if(x < this.GetXMin()) { this.model.Set("xMin", x); }
-    if(x > this.GetXMin()) { this.model.Set("xMax", x); }
+        public void SetAt(Hashtable voxelData, int x, int y, int z)
+        {
+            this.voxelMap.GetSub(x).GetSub(y).GetSub(z).Merge(voxelData);
 
-    if(y < this.GetYMin()) { this.model.Set("yMin", y); }
-    if(y > this.GetYMin()) { this.model.Set("yMax", y); }
+            if(x < this.GetXMin())
+            { this.data.Set("xMin", x); }
+            if(x > this.GetXMin())
+            { this.data.Set("xMax", x); }
 
-    if(z < this.GetZMin()) { this.model.Set("zMin", z); }
-    if(z > this.GetZMin()) { this.model.Set("zMax", z); }
+            if(y < this.GetYMin())
+            { this.data.Set("yMin", y); }
+            if(y > this.GetYMin())
+            { this.data.Set("yMax", y); }
 
-    int xChunk = this.ToChunk(x);
-    int yChunk = this.ToChunk(y);
-    int zChunk = this.ToChunk(z);
+            if(z < this.GetZMin())
+            { this.data.Set("zMin", z); }
+            if(z > this.GetZMin())
+            { this.data.Set("zMax", z); }
 
-    bool chunkExists = true;
-    if (!this.chunkMap.Has(xChunk)) { chunkExists = false; }
-    if (!this.chunkMap.GetChild(xChunk).Has(yChunk)) { chunkExists = false; }
-    if (!this.chunkMap.GetChild(xChunk).GetChild(yChunk).Has(zChunk)) { chunkExists = false; }
-    if (!chunkExists) {
-      this.chunkMap.GetChild(xChunk).GetChild(yChunk).Set(zChunk, true);
+            int xChunk = this.ToChunk(x);
+            int yChunk = this.ToChunk(y);
+            int zChunk = this.ToChunk(z);
 
-      UData chunkEventData = new UData();
-        chunkEventData.Set("x", xChunk);
-        chunkEventData.Set("y", yChunk);
-        chunkEventData.Set("z", zChunk);
+            bool chunkExists = true;
+            if (!this.chunkMap.Has(xChunk))
+            { chunkExists = false; }
+            if (!this.chunkMap.GetSub(xChunk).Has(yChunk))
+            { chunkExists = false; }
+            if (!this.chunkMap.GetSub(xChunk).GetSub(yChunk).Has(zChunk))
+            { chunkExists = false; }
+            if (!chunkExists)
+            {
+                this.chunkMap.GetSub(xChunk).GetSub(yChunk).Set(zChunk, true);
 
-      this.dispatcher.Trigger("chunk_created", chunkEventData);
+                Hashtable chunkEventData = new Hashtable();
+                    chunkEventData.Set("x", xChunk);
+                    chunkEventData.Set("y", yChunk);
+                    chunkEventData.Set("z", zChunk);
+
+                this.dispatcher.Trigger("chunk_created", chunkEventData);
+            }
+        }
+
+        private Hashtable CreateVoxelAt(int x, int y, int z){
+            Hashtable voxelData = new Hashtable();
+                voxelData.Set("fill", 0f);
+
+            this.SetAt(voxelData, x, y, z);
+            return voxelData;
+        }
+
+        public Hashtable WithAt(int x, int y, int z)
+        {
+            if(!this.HasAt(x, y, z))
+            { return CreateVoxelAt(x, y, z); }
+            return this.voxelMap.GetSub(x).GetSub(y).GetSub(z);
+        }
+
+        public Hashtable GetAt(int x, int y, int z)
+        {
+            if(!this.HasAt(x, y, z))
+            { return new Hashtable(); }
+            return this.voxelMap.GetSub(x).GetSub(y).GetSub(z).Copy();
+        }
+
+        private int ToChunk(int value)
+        {
+            return value/ this.data.Get<int>("chunkSize");;
+        }
     }
-  }
-
-  private UData CreateVoxelAt(int x, int y, int z){
-    UData voxelData = new UData();
-      voxelData.Set("fill", 0f);
-
-    this.SetAt(voxelData, x, y, z);
-    return voxelData;
-  }
-
-  public UData WithAt(int x, int y, int z) {
-    if(!this.HasAt(x, y, z)) { return CreateVoxelAt(x, y, z); }
-    return this.voxelMap.GetChild(x).GetChild(y).GetChild(z);
-  }
-
-  public UData GetAt(int x, int y, int z) {
-    if(!this.HasAt(x, y, z)) { return new UData(); }
-    return this.voxelMap.GetChild(x).GetChild(y).GetChild(z).Clone();
-  }
-
-  private int ToChunk(int value) {
-    return value/ this.model.Get<int>("chunkSize");;
-  }
 }

@@ -1,8 +1,10 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
+
+using Ukulele;
 
 // using ExitGames.Client.Photon;
 
@@ -19,11 +21,11 @@ public class UNetwork : Singleton<UNetwork> {
     return (new WWW(url)).text;
   }
 
-  static public WWW PostWWW(string url, UData payload) {
+  static public WWW PostWWW(string url, Hashtable payload) {
     Dictionary<string, string> headers = new Dictionary<string, string>();
     headers.Add( "Content-Type", "application/json" );
 
-    string json = payload.Serialize();
+    string json = JSON.Serialize(payload);
     byte[] utfBytes = System.Text.Encoding.UTF8.GetBytes(json);
     WWW www = new WWW(url, utfBytes, headers);
 
@@ -34,7 +36,7 @@ public class UNetwork : Singleton<UNetwork> {
     return www;
   }
   
-  static public string Post(string url, UData payload) {
+  static public string Post(string url, Hashtable payload) {
     return PostWWW(url, payload).text;
   }
 

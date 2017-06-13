@@ -1,8 +1,61 @@
-﻿// using UnityEngine;
-// using System.Collections;
-// using System.Collections.Generic;
+﻿using UnityEngine;
 
-// public static class HashtableExtension {
+using System.Collections;
+using System.Collections.Generic;
+
+public static class HashtableExtension {
+  public static T Get<T>(this Hashtable that, object key)
+  {
+    return (T)that.Get(key);
+  }
+
+  public static object Get(this Hashtable that, object key)
+  {
+    if(that.Has(key) == false)
+    { return null; }
+    return that[key];
+
+  }
+
+  public static void Set(this Hashtable that, object key, object value)
+  {
+    that[key] = value;
+  }
+
+  public static Hashtable Merge(this Hashtable that, Hashtable other, bool overwrite=false)
+  {
+    foreach (DictionaryEntry entry in other)
+    {
+      if(overwrite || !that.Has(entry.Key))
+      { that[entry.Key] = entry.Value; }
+    }
+    return that;
+  }
+
+  public static Hashtable Copy(this Hashtable that)
+  {
+    return (new Hashtable()).Merge(that);
+  }
+
+  public static bool Has(this Hashtable that, object key)
+  {
+    return that.ContainsKey(key);
+  }
+
+  public static Hashtable GetSub(this Hashtable that, object subKey)
+  // WARNING - DESTRUCTIVE
+  // subKey cannot contain '.'
+  // TODO: test for that
+  {
+      if(that.Get(subKey).GetType() != typeof(Hashtable))
+      {
+          that.Set(subKey, new Hashtable());
+      }
+
+      return that.Get<Hashtable>(subKey);
+  }
+}
+
 //   public static bool HasCycle(this Hashtable that){
 //     return that.HasCycle(new List<Hashtable>());
 //   }

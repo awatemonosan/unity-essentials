@@ -7,31 +7,19 @@ public class USeatController : MonoBehaviour
     public int seatID;
 
 // Custom Events
-    void OnTriggerStayed(UData payload)
+    void OnTriggerStayed(GameObject other)
     {
-        GameObject other = payload.Get<GameObject>();
-        if(other == null)
-        { return; }
-
         ActorController actor = other.GetComponent<ActorController>();
-        if(actor == null)
+        if(actor == null) // not an actor
         { return; }
 
-        PhotonView view = this.GetComponentInParent<PhotonView>();
-        if(view == null)
-        { return; }
-
-        actor.vehiclePhotonID = view.viewID;
+        actor.vehiclePhotonID = this.GetComponentInParent<PhotonView>().viewID;
         actor.vehicleSeat = this.seatID;
         actor.vehicleCanEnter = true;
     }
 
-    void OnTriggerExited(UData payload)
+    void OnTriggerExited(GameObject other)
     {
-        GameObject other = payload.Get<GameObject>();
-        if(other == null)
-        { return; }
-
         ActorController actor = other.GetComponent<ActorController>();
         if(actor == null)
         { return; }

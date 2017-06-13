@@ -4,6 +4,17 @@ using System.Collections;
 using System.Collections.Generic;
 
 public static class StringExtension {
+  public static string UppercaseFirst(this string that)
+  {
+    // Check for empty string.
+    if (string.IsNullOrEmpty(that))
+    {
+      return string.Empty;
+    }
+    // Return char and concat substring.
+    return char.ToUpper(that[0]) + that.Substring(1);
+  }
+
   public static byte[] ToBytes(this string str)
   {
     byte[] bytes = new byte[str.Length * sizeof(char)];

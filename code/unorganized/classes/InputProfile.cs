@@ -4,28 +4,34 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class InputProfile {
-  public Dispatcher dispatcher = new Dispatcher();
-  private DispatcherInterface uInputInterface = new DispatcherInterface(UInput.WithInstance().GetDispatcher());
-  private Dictionary<string, string> inputBindingMap = new Dictionary<string, string>();
+using Ukulele;
 
-  public void Bind(string inputName, string bindingName)
-  {
-    this.Unbind(inputName);
-    this.uInputInterface.On(inputName, this.BoundInputCallback);
-    this.inputBindingMap[inputName] = bindingName;
-  }
+namespace Ukulele
+{
+    public class InputProfile
+    {
+        public Dispatcher dispatcher = new Dispatcher();
+        private DispatcherInterface uInputInterface = new DispatcherInterface(UInput.WithInstance().GetDispatcher());
+        private Dictionary<string, string> inputBindingMap = new Dictionary<string, string>();
 
-  public void Unbind(string inputName)
-  {
-    this.uInputInterface.Off(inputName);
-    this.inputBindingMap.Remove(inputName);
-  }
+        public void Bind(string inputName, string bindingName)
+        {
+            this.Unbind(inputName);
+            this.uInputInterface.On(inputName, this.BoundInputCallback);
+            this.inputBindingMap[inputName] = bindingName;
+        }
 
-  private void BoundInputCallback(UData payload)
-  {
-    string inputName = payload.Get<string>("eventName");
-    string bindingName = inputBindingMap[inputName];
-    this.dispatcher.Trigger(bindingName);
-  }
+        public void Unbind(string inputName)
+        {
+            this.uInputInterface.Off(inputName);
+            this.inputBindingMap.Remove(inputName);
+        }
+
+        private void BoundInputCallback(Hashtable payload)
+        {
+            string inputName = payload.Get<string>("eventName");
+            string bindingName = inputBindingMap[inputName];
+            this.dispatcher.Trigger(bindingName);
+        }
+    }
 }

@@ -1,17 +1,20 @@
 using UnityEngine;
+
 using System.Collections;
 using System.Collections.Generic;
+
+using Ukulele;
 
 public class UTerrainController : MonoBehaviour
 {
   private UVoxelMapController voxelMapController;
   private UVoxelGenerator voxelGenerator;
-  private UData chunkLoadedMap;
+  private Hashtable chunkLoadedMap;
 
   public void Initialize (UVoxelMapController voxelMapController, UVoxelGenerator voxelGenerator) {
     this.voxelGenerator= voxelGenerator;
     this.voxelMapController= voxelMapController;
-    this.chunkLoadedMap= new UData();
+    this.chunkLoadedMap= new Hashtable();
 
     this.gameObject.WithComponent<UMarchingCubesController>().Initialize(voxelMapController);
   }
@@ -40,9 +43,9 @@ public class UTerrainController : MonoBehaviour
     };
 
 
-    UData checkedChunks= new UData();
+    Hashtable checkedChunks= new Hashtable();
     LinkedList<Vector3> checkQueue= new LinkedList<Vector3>();
-    checkedChunks.GetChild(center.x).GetChild(center.y).Set(center.z, true);
+    checkedChunks.GetSub(center.x).GetSub(center.y).Set(center.z, true);
     checkQueue.AddLast(center);
 
     float startTime = Time.realtimeSinceStartup;
@@ -57,8 +60,8 @@ public class UTerrainController : MonoBehaviour
 
       for(int i= 0; i < 6; i++) {
         Vector3 offset = checkPos + directions[i];
-        if(!checkedChunks.GetChild(offset.x).GetChild(offset.y).Has(offset.z) && UMath.IsVectorInSphere(offset, center, distance)) {
-          checkedChunks.GetChild(offset.x).GetChild(offset.y).Set(offset.z, true);
+        if(!checkedChunks.GetSub(offset.x).GetSub(offset.y).Has(offset.z) && UMath.IsVectorInSphere(offset, center, distance)) {
+          checkedChunks.GetSub(offset.x).GetSub(offset.y).Set(offset.z, true);
           checkQueue.AddLast(offset);
         }
       }
@@ -73,8 +76,8 @@ public class UTerrainController : MonoBehaviour
   }
 
   public bool GenerateChunk (int x, int y, int z) {
-    if(this.chunkLoadedMap.GetChild(x).GetChild(y).Has(z)) return false;
-    this.chunkLoadedMap.GetChild(x).GetChild(y).Set(z, true);
+    if(this.chunkLoadedMap.GetSub(x).GetSub(y).Has(z)) return false;
+    this.chunkLoadedMap.GetSub(x).GetSub(y).Set(z, true);
     this.voxelGenerator.GenerateChunk(this.voxelMapController, x, y, z);
     return true;
   }

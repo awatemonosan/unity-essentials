@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -10,7 +10,7 @@ public class GameObjectExtensionController : MonoBehaviour {
 
 // extended behaviors
 
-  // public void LoadModel(UData newModel)
+  // public void LoadModel(Hashtable newModel)
   // {
   //   this.model = newModel;
   //   this.GetDispatcher().Trigger("model.loaded");
@@ -18,7 +18,7 @@ public class GameObjectExtensionController : MonoBehaviour {
 
   // public void AnimKeyframe(string evnt)
   // {
-  //   UData payload = UData.Parse(evnt);
+  //   Hashtable payload = Hashtable.Parse(evnt);
   //   payload.Set("raw", evnt);
   //   this.GetDispatcher().Trigger("keyframe", payload);
   // }

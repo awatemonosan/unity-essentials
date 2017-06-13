@@ -7,58 +7,74 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-public class NetworkInterface : Dispatcher {
-  private UdpClient client;
-  private IPEndPoint endpoint;
+using Ukulele;
 
-  public NetworkInterface(string ipAddress, int port) {
-    // endpoint = new IPEndPoint(IPAddress.Parse(ipAddress), port);
-    // this.EnableTimedTriggers();
+namespace Ukulele
+{
+    public class NetworkInterface : Dispatcher
+    {
+        private UdpClient client;
+        private IPEndPoint endpoint;
 
-    endpoint = new IPEndPoint(IPAddress.Parse(ipAddress), port);
-    client = new UdpClient();
-    client.Connect(endpoint);
-    client.BeginReceive(new AsyncCallback(OnMessageRecieved), null);
-  }
+        public NetworkInterface(string ipAddress, int port)
+        {
+            // endpoint = new IPEndPoint(IPAddress.Parse(ipAddress), port);
+            // this.EnableTimedTriggers();
 
-  ~NetworkInterface(){
-    client.Close();
-  }
+            endpoint = new IPEndPoint(IPAddress.Parse(ipAddress), port);
+            client = new UdpClient();
+            client.Connect(endpoint);
+            client.BeginReceive(new AsyncCallback(OnMessageRecieved), null);
+        }
 
-  private void OnMessageRecieved(IAsyncResult ar) {
-    Byte[] receiveBytes  = client.EndReceive(ar, ref endpoint);
-    string receiveString = Encoding.ASCII.GetString(receiveBytes);
+        ~NetworkInterface()
+        {
+            client.Close();
+        }
 
-    UData payload = UData.Parse(receiveString);
-    payload.Set("source_ip", endpoint.Address.ToString());
-    payload.Set("source_port", endpoint.Port);
+        private void OnMessageRecieved(IAsyncResult ar)
+        {
+            Byte[] receiveBytes  = client.EndReceive(ar, ref endpoint);
+            string receiveString = Encoding.ASCII.GetString(receiveBytes);
 
-    this.Trigger(payload);
-    client.BeginReceive(new AsyncCallback(OnMessageRecieved), null);
-  }
+            Hashtable payload = JSON.Parse(receiveString);
+            payload.Set("source_ip", endpoint.Address.ToString());
+            payload.Set("source_port", endpoint.Port);
 
-  public void Send(string eventName) {
-    this.Send(eventName, new UData( ));
-  }
-  public void Send(string eventName, UData payload) {
-    payload.Set("event", eventName);
-    this.Send(payload);
-  }
-  public void Send(UData payload) {
-    this.SendRaw(payload);
-  }
+            this.Trigger(payload);
+            client.BeginReceive(new AsyncCallback(OnMessageRecieved), null);
+        }
 
-  public void SendRaw(UData payload) {
-    string json = payload.Serialize();
-    SendRaw(json);
-  }
+        public void Send(string eventName)
+        {
+            this.Send(eventName, new Hashtable( ));
+        }
 
-  public void SendRaw(string message) {
-    byte[] data = Encoding.UTF8.GetBytes(message);
-    SendRaw(data);
-  }
+        public void Send(string eventName, Hashtable payload)
+        {
+            payload.Set("event", eventName);
+            this.Send(payload);
+        }
 
-  public void SendRaw(byte[] data){
-    client.Send(data, data.Length);
-  }
+        public void Send(Hashtable payload)
+        {
+            this.SendRaw(payload);
+        }
+
+        public void SendRaw(Hashtable payload)
+        {
+            SendRaw(JSON.Serialize(payload));
+        }
+
+        public void SendRaw(string message)
+        {
+            byte[] data = Encoding.UTF8.GetBytes(message);
+            SendRaw(data);
+        }
+
+        public void SendRaw(byte[] data)
+        {
+            client.Send(data, data.Length);
+        }
+    }
 }

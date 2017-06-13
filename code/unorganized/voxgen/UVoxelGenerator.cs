@@ -1,9 +1,12 @@
 using UnityEngine;
+
 using System.Collections;
 using System.Collections.Generic;
 
+using Ukulele;
+
 public class UVoxelGenerator {
-  public virtual void GenerateAt (UData voxelData, int x, int y, int z) {
+  public virtual void GenerateAt (Hashtable voxelData, int x, int y, int z) {
     // Debug.Log("GenerateAt" + " " + x + " " + y + " " + z);
   }
 
@@ -19,7 +22,7 @@ public class UVoxelGenerator {
       }
     }
 
-    UData chunkData = new UData();
+    Hashtable chunkData = new Hashtable();
     chunkData.Set("x", xChunk);
     chunkData.Set("y", yChunk);
     chunkData.Set("z", zChunk);

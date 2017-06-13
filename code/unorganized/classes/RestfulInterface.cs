@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+using Ukulele;
+
 public class RestfulInterface
 {
   private string url;
@@ -11,13 +13,13 @@ public class RestfulInterface
     this.url = url;
   }
 
-  public UData Get(string path)
+  public Hashtable Get(string path)
   {
-    return UData.Parse(UNetwork.Get( url+path ));
+    return JSON.Parse(UNetwork.Get( url+path ));
   }
 
-  public UData Post(string path, UData payload)
+  public Hashtable Post(string path, Hashtable payload)
   {
-    return UData.Parse(UNetwork.Post( url+path , payload));
+    return JSON.Parse(UNetwork.Post( url+path , payload));
   }
 }

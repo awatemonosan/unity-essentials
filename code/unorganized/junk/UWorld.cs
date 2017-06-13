@@ -7,20 +7,20 @@
 // public class UVoxelTerrainManager : MonoBehaviour {
 //   private const int CHUNK_SIZE = 16;
 
-//   public delegate UData iUWorldGenerator(UData voxel, Vector3 point);
+//   public delegate Hashtable iUWorldGenerator(Hashtable voxel, Vector3 point);
 //   private List<iUWorldGenerator> generators;
 
-//   private UData blobModel;
-//   private UData terrainChunkControllers;
+//   private Hashtable blobModel;
+//   private Hashtable terrainChunkControllers;
   
 //   void Start() {
-//     this.gameObject.GetDispatcher().On("model", delegate(UData _) { this.Ready(); });
+//     this.gameObject.GetDispatcher().On("model", delegate(Hashtable _) { this.Ready(); });
 
 //     this.Ready();
 //   }
 
 //   public void Ready() {
-//     UData model = this.gameObject.GetModel();
+//     Hashtable model = this.gameObject.GetModel();
 //     this.chunkSize = model.Default<int>("chunkSize", 16);
 
 //     this.xMin = model.Default<int>("xMin", 0);
@@ -65,7 +65,7 @@
 
 //   public void GenerateVoxelAt(Vector3 point) {
 //     Vector3 voxelPoint = point.Floor();
-//     UData generatedVoxelModel = generators.Reduce<iUWorldGenerator, UData>(new UData(), delegate(UData voxelModel, int index, iUWorldGenerator generator, List<iUWorldGenerator> list){
+//     Hashtable generatedVoxelModel = generators.Reduce<iUWorldGenerator, Hashtable>(new Hashtable(), delegate(Hashtable voxelModel, int index, iUWorldGenerator generator, List<iUWorldGenerator> list){
 //       return generator(voxelModel, voxelPoint);
 //     });
 //     this.SetVoxelAt(point, generatedVoxelModel);
@@ -81,7 +81,7 @@
 //     this.WithChunkAt(point).RemoveVoxelAt(point);
 //   }
 
-//   public void SetVoxelAt(Vector3 point, UData voxelModel) {
+//   public void SetVoxelAt(Vector3 point, Hashtable voxelModel) {
 //     this.WithChunkAt(point).SetVoxelAt(point, voxelModel);
 //   }
 
@@ -97,7 +97,7 @@
 
 //   public UChunkController WithChunkAt(Vector3 point) {
 //     Vector3 chunkPoint = this.WorldPointToChunkPoint(point);
-//     UData chunkModel = this.gameObject.GetModel().GetChild("chunks").GetChild(chunkPoint.x).GetChild(chunkPoint.y).GetChild(chunkPoint.z);
+//     Hashtable chunkModel = this.gameObject.GetModel().GetChild("chunks").GetChild(chunkPoint.x).GetChild(chunkPoint.y).GetChild(chunkPoint.z);
 //     return new UChunkController(chunkModel, point);
 //   }
 
@@ -107,10 +107,10 @@
 // }
 
 // public class UChunkController {
-//   private UData chunkModel;
-//   private UData voxelsModel;
+//   private Hashtable chunkModel;
+//   private Hashtable voxelsModel;
 
-//   public UChunkController(UData chunkMode, Vector3 origin) {
+//   public UChunkController(Hashtable chunkMode, Vector3 origin) {
 //     this.chunkModel = chunkModel;
 //     this.voxelsModel = chunkModel.GetChild("voxels");
 
@@ -138,15 +138,15 @@
 //     voxelsModel.GetChild(voxelPoint.x).GetChild(voxelPoint.y).Remove(voxelPoint.z);
 //   }
 
-//   public void SetVoxelAt(Vector3 point, UData voxelModel) {
+//   public void SetVoxelAt(Vector3 point, Hashtable voxelModel) {
 //     Vector3 voxelPoint = point.Floor();
 //     voxelsModel.GetChild(voxelPoint.x).GetChild(voxelPoint.y).GetChild(voxelPoint.z).Merge(voxelModel);
 //   }
 // }
 
 // public class UVoxelController {
-//   private UData voxelModel;
-//   public UVoxelController(UData voxelModel) {
+//   private Hashtable voxelModel;
+//   public UVoxelController(Hashtable voxelModel) {
 //     this.voxelModel = voxelModel;
 //   }
 // }
@@ -177,11 +177,11 @@
 
 // //   public int GetZoneAt (Vector2 point) {
 // //     int zoneID = -1;
-// //     this.model.GetChild("zones").Each(delegate(UData kvp) {
+// //     this.model.GetChild("zones").Each(delegate(Hashtable kvp) {
 // //       string key = kvp.Get("key");
-// //       UData child = kvp.Get<UData>("value");
+// //       Hashtable child = kvp.Get<Hashtable>("value");
 // //       List<Vector2> points = new List<Vector2>();
-// //       child.Each(delegate(UData childKVP) {
+// //       child.Each(delegate(Hashtable childKVP) {
 // //         Vector2 point = kvp.Get<Vector2>("value");
 // //         points.Add(point);  
 // //       });
@@ -191,12 +191,12 @@
 // //   } 
 
 // //   public int CreateZone (List<int> points)  {
-// //     this.model.GetChild("zones").Push(new UData(points));
+// //     this.model.GetChild("zones").Push(new Hashtable(points));
 // //     return this.model.GetChild("zones").Length() - 1; 
 // //   }
 
 // //   public int AddPoint (Vector2 point) {
-// //     this.model.GetChild("points").Push(new UData(point));
+// //     this.model.GetChild("points").Push(new Hashtable(point));
 // //     return this.model.GetChild("points").Length() - 1;
 // //   }
 // // }
@@ -204,18 +204,18 @@
 
 // //   //old
 
-// //   public UPromise Spawn(string entityName, UData properties) {
+// //   public UPromise Spawn(string entityName, Hashtable properties) {
 // //     return new UPromise(delegate(Callback resolve, Callback reject) {
 // //       bool isObserved = properties.Get<bool>("observed") || false;
 // //       Vector2 point = properties.Get<Vector2>("point") || new Vector2(0,0);
 // //       UChunkController chunk = UWorld.GetChunkAt(point);
 
-// //       if(!chunk.IsActive() && !isObserved) { resolve(new UData()); }
+// //       if(!chunk.IsActive() && !isObserved) { resolve(new Hashtable()); }
 
 // //       this.GetHeightAt(point)
-// //         .Then(delegate(UData heightData) {
+// //         .Then(delegate(Hashtable heightData) {
 // //           float y = heightData.Get<Float>("height");
-// //           UData response = new UData();
+// //           Hashtable response = new Hashtable();
 // //           GameObject gameObject = GameObject.Instantiate(entityName, new Vector3(point.x, y, point.z));
 // //           gameObject.GetModel().Merge(properties);
 // //           response.Set("gameObject", gameObject);
@@ -225,15 +225,15 @@
 // //     });
 // //   }
 
-// //   private UData generatorCache = new UData();
+// //   private Hashtable generatorCache = new Hashtable();
 // //   public UPromise GetHeightAt(Vector2 point) {
 // //     return new UPromise(delegate(Callback resolve, Callback reject) {
-// //       UData cachedModel = generatorCache.GetChild(point.x).GetChild(point.y);
+// //       Hashtable cachedModel = generatorCache.GetChild(point.x).GetChild(point.y);
 // //       if (cachedModel.Has("height")) {
 // //         resolve(cachedModel.Get<float>("height"));
 // //       } else  {
 // //         this.GenerateHeightAt(point)
-// //           .Then(delegate(UData heightData){
+// //           .Then(delegate(Hashtable heightData){
 // //             float height = heightData.Get<float>("height");
 // //             cachedModel.Set("height", height);
 // //             resolve(height);
@@ -258,11 +258,11 @@
 // // }
 
 // // public class UChunkController {
-// //   private UData chunkModel;
+// //   private Hashtable chunkModel;
 // //   private int chunkSize;
 // //   private Vector2 chunkPosition;
 
-// //   UChunk(UData chunkModel, Vector2 chunkPosition) {
+// //   UChunk(Hashtable chunkModel, Vector2 chunkPosition) {
 // //     this.chunkModel = chunkModel;
 // //     this.chunkSize = chunkModel.Get<int>("chunkSize");
 // //     this.chunkPosition = chunkModel.Get<Vector2>("chunkPosition");
@@ -286,14 +286,14 @@
 // //     for (int x = chunkPosition.x; x < chunkPosition.x + chunkSize; x ++) {
 // //       for (int y = chunkPosition.y; y < chunkPosition.y + chunkSize; y ++) {
 // //         promises.Push( new UPromise( delegate(Callback resolve, Callback reject) {
-// //           UData generatorData = new UData();
+// //           Hashtable generatorData = new Hashtable();
 // //           generatorData.Set("x", x);
 // //           generatorData.Set("y", y);
 
 // //           generatorData.Set("height", 0);
 
 // //           generator(generatorData)
-// //             .then(delegate(UData generatedData){
+// //             .then(delegate(Hashtable generatedData){
 // //               float height = generatorData.Get<float>("height");
 // //               this.SetHeight(new Vector2(x,y), height);
 // //               resolve(generatedData);

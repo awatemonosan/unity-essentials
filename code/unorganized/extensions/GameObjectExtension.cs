@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 public static class GameObjectExtension
 {
-  // public static UData GetModel(this GameObject that)
+  // public static Hashtable GetModel(this GameObject that)
   // {
   //   return that.WithComponent<GameObjectExtensionController>().GetModel();
   // }
 
-  // public static void LoadModel(this GameObject that, UData newModel)
+  // public static void LoadModel(this GameObject that, Hashtable newModel)
   // {
   //   that.WithComponent<GameObjectExtensionController>().LoadModel(newModel);
   // }

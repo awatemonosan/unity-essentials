@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+using Ukulele;
+
 public class UWorld : Singleton<UWorld> {
   static public UTerrainController WithTerrain () {
     return UWorld.WithInstance().gameObject.WithComponent<UTerrainController>();

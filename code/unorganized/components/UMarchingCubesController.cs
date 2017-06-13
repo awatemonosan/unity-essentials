@@ -1,6 +1,9 @@
 using UnityEngine;
+
 using System.Collections;
 using System.Collections.Generic;
+
+using Ukulele;
 
 // [RequireComponent(typeof(MeshFilter))]
 // [RequireComponent(typeof(MeshRenderer))]
@@ -10,14 +13,14 @@ public class UMarchingCubesController : MonoBehaviour {
 
   UVoxelMapController voxelMapController;
   // UEmiterInterface voxelMapEmiter;
-  UData chunkMap = new UData();
+  Hashtable chunkMap = new Hashtable();
 
   public void Initialize(UVoxelMapController voxelMapController) {
   // public void Initialize(UVoxelMapController voxelMapController, Material material) {
     // this.material = material;
 
     this.voxelMapController = voxelMapController;
-    this.voxelMapController.dispatcher.On("chunk_created", delegate(UData chunkInfo) {
+    this.voxelMapController.dispatcher.On("chunk_created", delegate(Hashtable chunkInfo) {
       int x = chunkInfo.Get<int>("x");
       int y = chunkInfo.Get<int>("y");
       int z = chunkInfo.Get<int>("z");
@@ -25,7 +28,7 @@ public class UMarchingCubesController : MonoBehaviour {
       this.CreateChunk(x, y, z);
     });
 
-    this.voxelMapController.dispatcher.On("chunk_updated", delegate(UData chunkInfo) {
+    this.voxelMapController.dispatcher.On("chunk_updated", delegate(Hashtable chunkInfo) {
       int x = chunkInfo.Get<int>("x");
       int y = chunkInfo.Get<int>("y");
       int z = chunkInfo.Get<int>("z");
@@ -33,7 +36,7 @@ public class UMarchingCubesController : MonoBehaviour {
       this.UpdateChunk(x, y, z);
     });
 
-    this.voxelMapController.dispatcher.On("chunk_destroyed", delegate(UData chunkInfo) {
+    this.voxelMapController.dispatcher.On("chunk_destroyed", delegate(Hashtable chunkInfo) {
       int x = chunkInfo.Get<int>("x");
       int y = chunkInfo.Get<int>("y");
       int z = chunkInfo.Get<int>("z");
@@ -46,14 +49,14 @@ public class UMarchingCubesController : MonoBehaviour {
     GameObject chunk = new GameObject();
     chunk.transform.parent = this.transform;
     chunk.transform.Align(this.transform);
-    this.chunkMap.GetChild(x).GetChild(y).Set(z, chunk);
+    this.chunkMap.GetSub(x).GetSub(y).Set(z, chunk);
 
     this.UpdateChunk(x, y, z);
   }
 
   private void UpdateChunk(int x, int y, int z) {
     int chunkSize = this.voxelMapController.GetChunkSize();
-    GameObject chunk = this.chunkMap.GetChild(x).GetChild(y).Get<GameObject>(z);
+    GameObject chunk = this.chunkMap.GetSub(x).GetSub(y).Get<GameObject>(z);
 
     int xStart = x * chunkSize;
     int yStart = y * chunkSize;
@@ -75,9 +78,9 @@ public class UMarchingCubesController : MonoBehaviour {
   } 
 
   private void DestroyChunk(int x, int y, int z) {
-    if(chunkMap.GetChild(x).GetChild(y).Has(z)) {
-      GameObject.Destroy(chunkMap.GetChild(x).GetChild(y).Get<GameObject>(z));
-      chunkMap.GetChild(x).GetChild(y).Remove(z);
+    if(chunkMap.GetSub(x).GetSub(y).Has(z)) {
+      GameObject.Destroy(chunkMap.GetSub(x).GetSub(y).Get<GameObject>(z));
+      chunkMap.GetSub(x).GetSub(y).Remove(z);
     }
   }
 }

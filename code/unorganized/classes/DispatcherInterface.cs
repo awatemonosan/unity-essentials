@@ -4,32 +4,38 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class DispatcherInterface {
-  private Dispatcher dispatcher;
-  private Dictionary<string, DispatcherListener> disptcherListeners = new Dictionary<string, DispatcherListener>();
+using Ukulele;
 
-  public DispatcherInterface(Dispatcher dispatcher)
-  {
-    this.dispatcher = dispatcher;
-  }
-
-  ~DispatcherInterface()
-  {
-    foreach(KeyValuePair<string, DispatcherListener> entry in disptcherListeners)
+namespace Ukulele
+{
+    public class DispatcherInterface
     {
-      DispatcherListener disptcherListener = entry.Value;
-      disptcherListener.Release();
-    }  
-  }
+        private Dispatcher dispatcher;
+        private Dictionary<string, DispatcherListener> disptcherListeners = new Dictionary<string, DispatcherListener>();
 
-  public void On(string eventName, Callback callback)
-  {
-    this.Off(eventName);
-    this.disptcherListeners[eventName] = dispatcher.On(eventName, callback);
-  }
+        public DispatcherInterface(Dispatcher dispatcher)
+        {
+            this.dispatcher = dispatcher;
+        }
 
-  public void Off(string eventName)
-  {
-    this.disptcherListeners[eventName].Release();
-  }
+        ~DispatcherInterface()
+        {
+            foreach(KeyValuePair<string, DispatcherListener> entry in disptcherListeners)
+            {
+                DispatcherListener disptcherListener = entry.Value;
+                disptcherListener.Release();
+            }  
+        }
+
+        public void On(string eventName, Callback callback)
+        {
+            this.Off(eventName);
+            this.disptcherListeners[eventName] = dispatcher.On(eventName, callback);
+        }
+
+        public void Off(string eventName)
+        {
+            this.disptcherListeners[eventName].Release();
+        }
+    }
 }

@@ -1,16 +1,18 @@
 using UnityEngine;
 using System.Collections;
 
+using Ukulele;
+
 public class Spawner : MonoBehaviour {
   public string objectName = "";
   public string eventName = "";
 
   void Start()
   {
-    this.gameObject.GetDispatcher().On(eventName, this.Spawn);
+    this.On(eventName, this.Spawn);
   }
 
-  private void Spawn(UData payload) 
+  private void Spawn(Hashtable payload) 
   {
     Debug.Log("blam");
     GameObject.Instantiate(Resources.Load(objectName) as GameObject);
