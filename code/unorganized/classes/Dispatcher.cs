@@ -25,17 +25,17 @@ namespace Ukulele {
             this.Trigger(eventName, new Hashtable());
         }
 
+        public void Trigger(string eventName, object value)
+        {
+            Hashtable payload = new Hashtable();
+            payload.Set("value", value);
+            payload.Set("_auto", value);
+            this.Trigger(eventName, payload);
+        }
+
         public void Trigger(string eventName, Hashtable payload)
         {
             payload.Set("event", eventName);
-            this.Trigger(payload);
-        }
-
-        public void Trigger(string eventName, object obj)
-        {
-            Hashtable payload = new Hashtable();
-            payload.Set("event", eventName);
-            payload.Set("value", obj);
             this.Trigger(payload);
         }
 
@@ -49,10 +49,6 @@ namespace Ukulele {
 
             string eventName = payload.Get<string>("event");
             if(eventName == null) { return; }
-            payload.Set("event", eventName = eventName.ToLower());
-
-            // if(this.bindings.ContainsKey(eventName))
-            //   Trigger(this.bindings[eventName]);
 
             // If all
             if(eventName=="all")

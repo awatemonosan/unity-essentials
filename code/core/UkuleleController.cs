@@ -145,6 +145,19 @@ namespace Ukulele
             return child;
         }
 
+        public GameObject GetExclusiveChild()
+        {
+            for(int index = 0; index < this.GetChildCount(); index++)
+            {
+                GameObject child = this.GetChildObject(index).gameObject;
+                if(child.activeSelf)
+                {
+                    return child;
+                }
+            }
+            return null;
+        }
+
         public int GetIDForChild(GameObject child)
         {
             for(int index = 0; index < this.GetChildCount(); index++)
@@ -236,30 +249,57 @@ namespace Ukulele
     // dispatcher methods
         public void Trigger(string eventName, object value)
         {
-            string newEventName =
-                new List<string>( eventName.ToString()
-                    .UppercaseFirst()
-                    .Split('.')
-                ).Join();
+            // MESSAGE
+            if(value.GetType() == typeof(Hashtable))
+            {
+                if(((Hashtable)value).Has("_auto"))
+                {
+                    value = ((Hashtable)value).Get("value");
+                }
+            }
+            string unityMessageName = "On" +
+                new List<string>(eventName.Split('.'))
+                    .Map(delegate(int index, string element, List<string> list)
+                    {
+                        return element.UppercaseFirst();
+                    }).Join();
 
-            this.SendMessage(newEventName, value, SendMessageOptions.DontRequireReceiver);
-            this.Emit(eventName, value);
-        }
+            Debug.Log(eventName + " UnityMessageName: " + unityMessageName);
+            this.SendMessage( unityMessageName, value, SendMessageOptions.DontRequireReceiver );
 
-        public void Emit(string eventName, object value)
-        {
-            this.dispatcher.Trigger(eventName, value);
+            // EMIT
+            Hashtable payload;
+            if(value.GetType() == typeof(Hashtable))
+            { payload = (Hashtable)value; }
+            else
+            { (payload = new Hashtable()).Set("value", value); }
+            this.Emit( eventName, payload );
         }
 
         public void Trigger(string eventName)
         {
-            this.SendMessage(eventName, null, SendMessageOptions.DontRequireReceiver);
-            this.Emit(eventName);
+            this.Trigger(eventName, null);
+        }
+
+        public void Trigger(Hashtable eventData)
+        {
+            Debug.Log(eventData.Get<string>("event"));
+            this.Trigger(eventData.Get<string>("event"), eventData);
+        }
+
+        public void Emit(string eventName, Hashtable payload)
+        {
+            this.dispatcher.Trigger(eventName, payload);
         }
         
         public void Emit(string eventName)
         {
             this.dispatcher.Trigger(eventName);
+        }
+        
+        public void Emit(Hashtable eventData)
+        {
+            this.dispatcher.Trigger(eventData);
         }
 
         public DispatcherListener On(string eventName, Callback callback)

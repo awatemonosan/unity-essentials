@@ -64,96 +64,96 @@ public class UNetwork : Singleton<UNetwork> {
   public GameObject localPlayerController;
   
   void OnConnectedToPhoton() {
-    this.gameObject.GetDispatcher().Trigger("photon.init.success");
+    this.Emit("photon.init.success");
   }
   void OnFailedToConnectToPhoton (DisconnectCause cause) {
-    this.gameObject.GetDispatcher().Trigger("photon.init.fail");
+    this.Emit("photon.init.fail");
   }
   void OnCustomAuthenticationFailed (string debugMessage) {
-    this.gameObject.GetDispatcher().Trigger("photon.auth.fail");
+    this.Emit("photon.auth.fail");
   }
   void OnCustomAuthenticationResponse (Dictionary< string, object > data) {
-    this.gameObject.GetDispatcher().Trigger("photon.auth.response"); // TODO
+    this.Emit("photon.auth.response"); // TODO
   }
   void OnConnectedToMaster () {
-    this.gameObject.GetDispatcher().Trigger("photon.connect.success");
+    this.Emit("photon.connect.success");
   }
   void OnDisconnectedFromPhoton () {
-    this.gameObject.GetDispatcher().Trigger("photon.disconnect");
+    this.Emit("photon.disconnect");
   }
   void OnConnectionFail (DisconnectCause cause) {
-    this.gameObject.GetDispatcher().Trigger("photon.disconnect.fail"); // TODO
+    this.Emit("photon.disconnect.fail"); // TODO
   }
   void OnPhotonMaxCccuReached () {
-    this.gameObject.GetDispatcher().Trigger("photon.disconnect.max_cccu");
+    this.Emit("photon.disconnect.max_cccu");
   }
  
   void OnJoinedLobby () {
-    this.gameObject.GetDispatcher().Trigger("photon.lobby.join.success");
+    this.Emit("photon.lobby.join.success");
   }
   void OnLeftLobby () {
-    this.gameObject.GetDispatcher().Trigger("photon.lobby.left");
+    this.Emit("photon.lobby.left");
   }
   void OnLobbyStatisticsUpdate () {
-    this.gameObject.GetDispatcher().Trigger("photon.lobby.update"); // UNNECESSARY?
+    this.Emit("photon.lobby.update"); // UNNECESSARY?
   }
  
   void OnCreatedRoom () {
-    this.gameObject.GetDispatcher().Trigger("photon.room.create.success");
+    this.Emit("photon.room.create.success");
   }
   void OnPhotonCreateRoomFailed (object[] codeAndMsg) {
-    this.gameObject.GetDispatcher().Trigger("photon.room.create.fail"); // TODO
+    this.Emit("photon.room.create.fail"); // TODO
   }
   void OnJoinedRoom () {
     this.localPlayerController = PhotonNetwork.Instantiate("playerController", Vector3.zero, Quaternion.identity, 0);
 
-    this.gameObject.GetDispatcher().Trigger("photon.room.join.success");
+    this.Emit("photon.room.join.success");
   }
   void OnPhotonJoinRoomFailed (object[] codeAndMsg) {
-    this.gameObject.GetDispatcher().Trigger("photon.room.join.fail.generic"); // TODO
+    this.Emit("photon.room.join.fail.generic"); // TODO
   }
   void OnPhotonRandomJoinFailed (object[] codeAndMsg) {
-    this.gameObject.GetDispatcher().Trigger("photon.room.join.fail.random"); // TODO
+    this.Emit("photon.room.join.fail.random"); // TODO
   }
   void OnLeftRoom () {
-    this.gameObject.GetDispatcher().Trigger("photon.room.left");
+    this.Emit("photon.room.left");
   }
   void OnPhotonCustomRoomPropertiesChanged (Hashtable propertiesThatChanged) {
-    this.gameObject.GetDispatcher().Trigger("photon.room.properties"); // TODO
+    this.Emit("photon.room.properties"); // TODO
   }
   void OnPhotonPlayerConnected (PhotonPlayer newPlayer) {
-    this.gameObject.GetDispatcher().Trigger("photon.room.player.connect"); // TODO
+    this.Emit("photon.room.player.connect"); // TODO
   }
   void OnPhotonPlayerDisconnected (PhotonPlayer otherPlayer) {
-    this.gameObject.GetDispatcher().Trigger("photon.room.player.disconnect"); // TODO
+    this.Emit("photon.room.player.disconnect"); // TODO
   }
   void OnPhotonPlayerActivityChanged (PhotonPlayer otherPlayer) {
-    this.gameObject.GetDispatcher().Trigger("photon.room.player.update"); // UNNECESSARY?
+    this.Emit("photon.room.player.update"); // UNNECESSARY?
   }
   void OnPhotonPlayerPropertiesChanged (object[] playerAndUpdatedProps) {
-    this.gameObject.GetDispatcher().Trigger("photon.room.player.properties"); // TODO
+    this.Emit("photon.room.player.properties"); // TODO
   }
   void OnMasterClientSwitched (PhotonPlayer newMasterClient) {
-    this.gameObject.GetDispatcher().Trigger("photon.room.player.master"); // TODO
+    this.Emit("photon.room.player.master"); // TODO
   }
   void OnPhotonInstantiate (PhotonMessageInfo info) {
-    this.gameObject.GetDispatcher().Trigger("photon.room.object.instantiate"); // TODO
+    this.Emit("photon.room.object.instantiate"); // TODO
   }
   void OnOwnershipRequest (object[] viewAndPlayer) {
-    this.gameObject.GetDispatcher().Trigger("photon.room.object.request"); // TODO
+    this.Emit("photon.room.object.request"); // TODO
   }
   void OnOwnershipTransfered (object[] viewAndPlayers) {
-    this.gameObject.GetDispatcher().Trigger("photon.room.object.transfered"); // UNNECESSARY?
+    this.Emit("photon.room.object.transfered"); // UNNECESSARY?
   }
  
   void OnReceivedRoomListUpdate () {
     // this._roomList = PhotonNetwork.GetRoomList();
-    this.gameObject.GetDispatcher().Trigger("photon.room_list"); // TODO
+    this.Emit("photon.room_list"); // TODO
   }
   void OnUpdatedFriendList () {
-    this.gameObject.GetDispatcher().Trigger("photon.friend_list"); // TODO
+    this.Emit("photon.friend_list"); // TODO
   }
   void OnWebRpcResponse (ExitGames.Client.Photon.OperationResponse response) {
-    this.gameObject.GetDispatcher().Trigger("photon.webrpc"); // TODO
+    this.Emit("photon.webrpc"); // TODO
   }
 }

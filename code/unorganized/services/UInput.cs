@@ -411,7 +411,7 @@ public class InputWrapper {
     payload.Set("input", this.inputName);
     payload.Set("state", state);
     payload.Set("delta", this.Delta());
-
+        
     if(this.isBinary){
 
       float stateBinary = Mathf.Round(state);

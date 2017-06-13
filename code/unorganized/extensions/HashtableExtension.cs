@@ -3,10 +3,21 @@
 using System.Collections;
 using System.Collections.Generic;
 
+using Ukulele;
+
 public static class HashtableExtension {
+
   public static T Get<T>(this Hashtable that, object key)
   {
-    return (T)that.Get(key);
+    object value = that.Get(key);
+    if(value == null)
+    {
+      return default(T);
+    }
+    else
+    {
+      return (T)value;
+    }
   }
 
   public static object Get(this Hashtable that, object key)
@@ -14,7 +25,6 @@ public static class HashtableExtension {
     if(that.Has(key) == false)
     { return null; }
     return that[key];
-
   }
 
   public static void Set(this Hashtable that, object key, object value)
@@ -47,12 +57,31 @@ public static class HashtableExtension {
   // subKey cannot contain '.'
   // TODO: test for that
   {
-      if(that.Get(subKey).GetType() != typeof(Hashtable))
-      {
-          that.Set(subKey, new Hashtable());
-      }
+    if(that.Get(subKey).GetType() != typeof(Hashtable))
+    {
+      that.Set(subKey, new Hashtable());
+    }
 
-      return that.Get<Hashtable>(subKey);
+    return that.Get<Hashtable>(subKey);
+  }
+
+  // public static ReturnType Reduce<ReturnType>(this Dictionary that, ReduceIterator <ReturnType>reduceIterator, ReturnType memo=default(ReturnType))
+  // {
+  //   foreach(KeyValuePair<object, object> kvp in that)
+  //   {
+  //     memo = reduceIterator(memo, kvp.Key, kvp.Value);
+  //   }
+
+  //   return memo;
+  // }
+  public static ReturnType Reduce<ReturnType>(this Hashtable that, ReduceIterator <ReturnType>reduceIterator, ReturnType memo=default(ReturnType))
+  {
+    foreach(DictionaryEntry de in that)
+    {
+      memo = reduceIterator(memo, de.Key, de.Value);
+    }
+
+    return memo;
   }
 }
 

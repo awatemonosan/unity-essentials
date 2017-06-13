@@ -10,7 +10,7 @@ using Ukulele;
 namespace Ukulele
 {
     public delegate void EachIterator(string key, object value);
-    public delegate T ReduceIterator<T>(T memo, string key, object value);
+    public delegate T ReduceIterator<T>(T memo, object key, object value);
 
 
     public class DataView
@@ -34,7 +34,7 @@ namespace Ukulele
         {
             List<string> path = new List<string>(key.Split('.'));
 
-            if(path.Count>1)
+            if(path.Count==1)
             {
                 return this.data.Get(key);
             }
@@ -50,16 +50,6 @@ namespace Ukulele
         {
             return (T)this.Get(key);
         }
-
-        public object Get()
-        {
-            return this.Get("_value");
-        }
-
-        public T Get<T>()
-        {
-            return (T)this.Get();
-        }
         
         public object Get(object key)
         {
@@ -70,13 +60,11 @@ namespace Ukulele
         {
             return this.Get<T>(key.ToString());
         }
-        
 
         public void Set(string key, object value)
         {
             List<string> path = new List<string>(key.Split('.'));
-
-            if(path.Count>1)
+            if(path.Count==1)
             {
                 this.data.Set(key, value);
             }
@@ -86,11 +74,9 @@ namespace Ukulele
                 string pathKey = path.Join(".");
                 this.Find(pathKey).Set(finalKey, value);
             }
-        }
 
-        public void Set(object value)
-        {
-            this.Set("_value", value);
+            string eventName = key + ".changed";
+            this.dispatcher.Trigger(eventName, value);
         }
         
         public void Set(object key, object value)

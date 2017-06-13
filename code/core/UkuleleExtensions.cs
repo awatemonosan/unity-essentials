@@ -32,6 +32,7 @@ namespace Ukulele
             }
             return component;
         }
+
         public static T WithComponent<T>(this Component that) where T : Component
         {
             return that.gameObject.WithComponent<T>();
@@ -54,6 +55,15 @@ namespace Ukulele
         static public GameObject GetChildObject(this Component that, string name)
         {
             return that.GetComponent<Transform>().Find(name).gameObject;
+        }
+
+        public static Dispatcher GetDispatcher(this GameObject that)
+        {
+            return that.WithComponent<UkuleleController>().dispatcher;
+        }
+        public static Dispatcher GetDispatcher(this Component that)
+        {
+            return that.WithComponent<UkuleleController>().dispatcher;
         }
 
     // Simple Proxies
@@ -91,6 +101,15 @@ namespace Ukulele
         static public GameObject SetExclusiveChild(this Component that, string name)
         {
             return that.WithComponent<UkuleleController>().SetExclusiveChild(name);
+        }
+
+        static public GameObject GetExclusiveChild(this GameObject that)
+        {
+            return that.WithComponent<UkuleleController>().GetExclusiveChild();
+        }
+        static public GameObject GetExclusiveChild(this Component that)
+        {
+            return that.WithComponent<UkuleleController>().GetExclusiveChild();
         }
         
         // static public void SetRoot(this GameObject that)
@@ -156,20 +175,20 @@ namespace Ukulele
             that.WithComponent<UkuleleController>().Emit(eventName);
         }
 
-        static public void Emit(this GameObject that, string eventName, object payload)
+        static public void Emit(this GameObject that, string eventName, Hashtable payload)
         {
             that.WithComponent<UkuleleController>().Emit(eventName, payload);
         }
-        static public void Emit(this Component that, string eventName, object payload)
+        static public void Emit(this Component that, string eventName, Hashtable payload)
         {
             that.WithComponent<UkuleleController>().Emit(eventName, payload);
         }
 
-        static public void Emit(this GameObject that, object eventData)
+        static public void Emit(this GameObject that, Hashtable eventData)
         {
             that.WithComponent<UkuleleController>().Emit(eventData);
         }
-        static public void Emit(this Component that, object eventData)
+        static public void Emit(this Component that, Hashtable eventData)
         {
             that.WithComponent<UkuleleController>().Emit(eventData);
         }
@@ -181,15 +200,6 @@ namespace Ukulele
         static public DispatcherListener On(this Component that, string eventName, Callback callback)
         {
             return that.WithComponent<UkuleleController>().On(eventName, callback);
-        }
-
-        public static Dispatcher GetDispatcher(this GameObject that)
-        {
-            return that.WithComponent<UkuleleController>().GetDispatcher();
-        }
-        public static Dispatcher GetDispatcher(this Component that)
-        {
-            return that.WithComponent<UkuleleController>().GetDispatcher();
         }
 
         public static bool IsOnGround(this GameObject that)
