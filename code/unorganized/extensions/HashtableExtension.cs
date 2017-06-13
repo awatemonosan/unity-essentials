@@ -57,7 +57,7 @@ public static class HashtableExtension {
   // subKey cannot contain '.'
   // TODO: test for that
   {
-    if(that.Get(subKey).GetType() != typeof(Hashtable))
+    if(!that.Has(subKey) || that.Get(subKey).GetType() != typeof(Hashtable))
     {
       that.Set(subKey, new Hashtable());
     }

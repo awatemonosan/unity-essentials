@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using System;
+using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -51,6 +53,26 @@ namespace Ukulele
 
         public void FixedUpdate()
         {
+            // foreach (Component component in this.GetComponents<Component>())
+            // {
+            //     if(component.GetType() == typeof(Rigidbody)
+            //     || component.GetType() == typeof(Transform))
+            //     { continue; }
+
+            //     Type type = component.GetType();
+            //     PropertyInfo[] properties = type.GetProperties(
+            //         BindingFlags.Public
+            //       | BindingFlags.Instance
+            //       | BindingFlags.DeclaredOnly
+            //     );
+
+            //     foreach (PropertyInfo property in properties)
+            //     {
+            //         string key = type.ToString() + "." + property.Name;
+            //         object value = property.GetValue(component, null);
+            //         this.Set(key, value);
+            //     }
+            // }
             if(this.GetComponent<Rigidbody>() != null)
             {
                 if(this.GetComponent<Rigidbody>().IsSleeping() == false)
@@ -115,7 +137,10 @@ namespace Ukulele
 
         public T Get<T>(object key)
         {
-            return (T)this.Get(key);
+            object value = this.Get(key);
+            if(value == null)
+            { return default(T); }
+            return (T)value;
         }
 
         public GameObject SetExclusiveChild(int id)
@@ -183,7 +208,7 @@ namespace Ukulele
             return isOnGround;
         }
 
-        public bool IsTouching(Object other)
+        public bool IsTouching(object other)
         {
             return impacts.ContainsKey(other);
         }
@@ -264,7 +289,6 @@ namespace Ukulele
                         return element.UppercaseFirst();
                     }).Join();
 
-            Debug.Log(eventName + " UnityMessageName: " + unityMessageName);
             this.SendMessage( unityMessageName, value, SendMessageOptions.DontRequireReceiver );
 
             // EMIT
@@ -283,7 +307,6 @@ namespace Ukulele
 
         public void Trigger(Hashtable eventData)
         {
-            Debug.Log(eventData.Get<string>("event"));
             this.Trigger(eventData.Get<string>("event"), eventData);
         }
 
