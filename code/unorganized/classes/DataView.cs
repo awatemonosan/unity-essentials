@@ -9,6 +9,17 @@ using Ukulele;
 
 namespace Ukulele
 {
+    public class DataChange
+    {
+        public object newValue;
+        public object oldValue;
+        public DataChange(object newValue, object oldValue)
+        {
+            this.newValue = newValue;
+            this.oldValue = oldValue;
+        }
+    }
+
     public delegate void EachIterator(string key, object value);
     public delegate T ReduceIterator<T>(T memo, object key, object value);
 
@@ -61,27 +72,34 @@ namespace Ukulele
             return this.Get<T>(key.ToString());
         }
 
-        public void Set(string key, object value)
+        public void Set(string key, object newValue)
         {
+            if(newValue.Equals(this.Get(key)))
+            {
+                return;
+            }
+
+            object oldValue = this.Get(key);
+
             List<string> path = new List<string>(key.Split('.'));
             if(path.Count==1)
             {
-                this.data.Set(key, value);
+                this.data.Set(key, newValue);
             }
             else
             {
                 string finalKey = path.Pop();
                 string pathKey = path.Join(".");
-                this.Find(pathKey).Set(finalKey, value);
+                this.Find(pathKey).Set(finalKey, newValue);
             }
 
             string eventName = key + ".changed";
-            this.dispatcher.Trigger(eventName, value);
+            this.dispatcher.Trigger(eventName, new DataChange(newValue, oldValue));
         }
         
-        public void Set(object key, object value)
+        public void Set(object key, object newValue)
         {
-            this.Set(key.ToString(), value);
+            this.Set(key.ToString(), newValue);
         }
 
         public DataView Find(string key)
